@@ -2,274 +2,347 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verb Academy: Kitty Tutor Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verb Academy Pro | Oficial</title>
     <style>
         :root {
             --primary: #6c5ce7; --success: #1dd1a1; --bg: #f0f4f8;
             --pink-kitty: #ff9ff3; --blue-hat: #4834d4;
+            --kids-yellow: #fff200; --kids-green: #32ff7e; --kids-pink: #ff9fcf;
         }
 
-        /* ESTILOS TEMAS */
-        .kids-theme { background: #fff9e6 !important; font-family: 'Comic Sans MS', cursive !important; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); margin: 0; padding: 0;
+            display: flex; justify-content: center; min-height: 100vh;
+        }
+
+        /* DISEÑO TIPO APP MÓVIL */
+        .app-container {
+            width: 100%; max-width: 500px; background: white; min-height: 100vh;
+            display: flex; flex-direction: column; position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); overflow-x: hidden;
+        }
+
+        /* TEMAS DINÁMICOS */
+        .kids-theme { background: linear-gradient(160deg, var(--kids-yellow), #ffffff) !important; }
+        .kids-theme .btn { border: 3px solid #000; color: #000 !important; }
         .theme-hellokitty { --primary: #ff9ff3; --bg: #fff0f5; }
         .theme-batman { --primary: #2d3436; --bg: #1e272e; color: #f1c40f; }
         .theme-deadpool { --primary: #d63031; --bg: #2d3436; color: white; }
 
-        body { font-family: sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; transition: 0.5s; overflow: hidden; }
-        .app { background: white; width: 95%; max-width: 550px; padding: 25px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; position: relative; }
+        .header { background: var(--primary); color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
+        .profile-pic-mini { width: 42px; height: 42px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
+
+        .view { display: none; padding: 20px; flex-grow: 1; }
+        .view.active { display: flex; flex-direction: column; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* GATITO TUTOR */
+        .tutor-section { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: #fff; border-radius: 20px; padding: 12px; border: 2px solid #eee; }
+        .kitty-face { font-size: 55px; animation: bounce 2s infinite; }
+        .speech-bubble { flex: 1; font-size: 0.9rem; color: #444; font-weight: 500; }
+
+        .btn { 
+            width: 100%; padding: 16px; border: none; border-radius: 18px; 
+            font-size: 1rem; font-weight: 700; cursor: pointer; 
+            margin: 8px 0; color: white; background: var(--primary);
+            transition: transform 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+        }
+        .btn:active { transform: translateY(3px); box-shadow: none; }
+
+        /* TARJETAS DE ESTUDIO */
+        .study-card { border: 2px solid var(--primary); border-radius: 20px; padding: 20px; background: #fff; margin-bottom: 15px; }
+        .verb-main { font-size: 1.8rem; font-weight: 800; color: #2d3436; margin-bottom: 15px; display: block; }
+        .verb-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f1f1; font-size: 1.1rem; }
         
-        /* DISEÑO INTEGRADO DEL GATITO TUTOR */
-        .study-area { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 15px 0; }
-        @media (min-width: 480px) { .study-area { flex-direction: row; justify-content: center; } } /* En PC, uno al lado del otro */
+        /* INPUTS */
+        input.answer-input { 
+            background: #f8f9fa; color: #333; border: 2px solid #e2e8f0; 
+            text-align: center; font-size: 1.1rem; margin-bottom: 10px;
+        }
+        input.answer-input:focus { border-color: var(--primary); outline: none; background: #fff; }
 
-        .kitty-tutor { font-size: 80px; text-align: center; animation: bounce 2s infinite; position: relative; flex-shrink: 0; }
-        .kitty-hat-pro { position: absolute; top: -20px; left: 25px; font-size: 35px; }
-        .kitty-speech { background: white; border-radius: 15px; padding: 10px; font-size: 14px; border: 2px solid var(--pink-kitty); box-shadow: 2px 2px 5px rgba(0,0,0,0.1); max-width: 150px; color: #333; margin-bottom: 10px; }
+        /* PERFIL */
+        .profile-content { text-align: center; padding-top: 10px; }
+        #profile-img-big { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--primary); object-fit: cover; margin-bottom: 10px; }
+        .stats-box { display: flex; gap: 10px; margin: 15px 0; }
+        .stat-card { flex: 1; background: #f1f2f6; padding: 10px; border-radius: 15px; }
 
-        /* VISTAS */
-        .view { display: none; }
-        .view.active { display: block; animation: zoomIn 0.3s; }
-        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
-        .btn { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; color: white; background: var(--primary); }
-        .btn-home { background: #dfe6e9; color: #636e72; padding: 8px; font-size: 0.9rem; margin-top: 20px; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 10px; text-align: center; box-sizing: border-box; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         
-        .study-note { background: #fdfdff; border: 2px dashed var(--primary); border-radius: 15px; padding: 15px; flex-grow: 1; width: 100%; }
-        .verb-row { display: flex; justify-content: space-around; margin: 10px 0; font-weight: bold; font-size: 1.1rem; }
-        .slider-box { background: #f1f2f6; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 0.8rem; color: #333; }
+        /* RESUMEN FINAL */
+        #summary-list { text-align: left; list-style: none; padding: 0; font-size: 0.9rem; max-height: 250px; overflow-y: auto; }
+        #summary-list li { padding: 8px; border-bottom: 1px solid #eee; word-break: break-all; }
     </style>
 </head>
 <body id="body-bg">
 
-<div class="app" id="app-box">
-    <audio id="bg-music" loop>
+<div class="app-container" id="app-box">
+    <audio id="bg-music" loop preload="auto">
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" type="audio/mpeg">
     </audio>
 
-    <div id="view-login" class="view">
-        <h1>🌟 Verb Academy</h1>
-        <input type="text" id="user-name" placeholder="Tu nombre">
-        <button class="btn" onclick="saveUser()">Entrar al Curso</button>
+    <div class="header" id="main-header" style="display:none;">
+        <div onclick="showView('view-profile')" style="cursor:pointer; display:flex; align-items:center; gap:10px;">
+            <img id="header-pic" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="profile-pic-mini">
+            <span id="header-name" style="font-weight:bold; font-size:0.9rem;">Cargando...</span>
+        </div>
+        <div id="header-xp" style="font-weight:bold;">⭐ 0 XP</div>
+    </div>
+
+    <div id="view-login" class="view active">
+        <h1 style="text-align:center; color:var(--primary); margin-bottom:10px;">Verb Academy</h1>
+        <div class="tutor-section">
+            <div class="kitty-face">🐱</div>
+            <div class="speech-bubble">¡Hola! Soy tu tutor personal. ¿Cómo quieres que te llame?</div>
+        </div>
+        <input type="text" id="user-name" class="btn answer-input" placeholder="Escribe tu nombre aquí">
+        <button class="btn" onclick="initApp()">¡Empezar mi Aventura!</button>
     </div>
 
     <div id="view-menu" class="view">
-        <h2 id="welcome-msg"></h2>
-        <p>El gatito tutor te guiará hoy:</p>
-        <button class="btn" style="background:var(--pink-kitty)" onclick="selectMode('kids')">🧸 Modo Niños (Diversión)</button>
-        <button class="btn" style="background:var(--primary)" onclick="showView('view-themes')">⚡ Modo Pro (Reto)</button>
-        <button class="btn" style="background:#ffa502" onclick="startKittyGame()">🎮 Juego: Alimenta al Tutor</button>
+        <div class="tutor-section">
+            <div class="kitty-face">🐱</div>
+            <div class="speech-bubble" id="menu-msg">¡Qué alegría verte! Elige un modo para practicar hoy.</div>
+        </div>
+        <button class="btn" style="background:var(--kids-green); color:#111 !important;" onclick="selectMode('kids')">🧸 Modo Niños</button>
+        <button class="btn" onclick="showView('view-themes')">⚡ Modo Adolescente</button>
+        <button class="btn" style="background:#ffa502" onclick="startKittyGame()">🎮 Juego: Alimenta al Gatito</button>
+        <button class="btn" style="background:#4b4b4b" onclick="showView('view-profile')">👤 Mi Perfil y Logros</button>
+    </div>
+
+    <div id="view-profile" class="view">
+        <div class="profile-content">
+            <img id="profile-img-big" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+            <input type="file" id="file-input" style="display:none" onchange="updatePhoto(event)">
+            <button class="btn" style="width:auto; padding:6px 12px; font-size:0.7rem; margin:0;" onclick="document.getElementById('file-input').click()">EDITAR FOTO</button>
+            <h2 id="profile-user-name" style="margin:10px 0;">Nombre</h2>
+            <div class="stats-box">
+                <div class="stat-card"><b>Puntos</b><br><span id="stat-xp">0</span></div>
+                <div class="stat-card"><b>Niveles</b><br><span id="stat-lvls">0</span></div>
+            </div>
+            <h4 style="margin-bottom:5px;">🏆 Logros Obtenidos</h4>
+            <div id="achievements-list" style="color:#777; font-size:0.8rem;">Completa niveles para ganar medallas.</div>
+        </div>
+        <button class="btn" style="background:#eee; color:#333; box-shadow:none;" onclick="showView('view-menu')">Cerrar</button>
     </div>
 
     <div id="view-themes" class="view">
-        <h2>Temas Pro:</h2>
+        <h3>Elige tu Estilo</h3>
         <button class="btn" style="background:#ff9ff3" onclick="selectMode('teens', 'hellokitty')">Hello Kitty 🎀</button>
         <button class="btn" style="background:#2d3436; color:#f1c40f" onclick="selectMode('teens', 'batman')">Batman 🦇</button>
         <button class="btn" style="background:#d63031" onclick="selectMode('teens', 'deadpool')">Deadpool ⚔️</button>
     </div>
 
     <div id="view-levels" class="view">
-        <h2>Niveles de Estudio</h2>
-        <button class="btn" onclick="startLevel(0)">Nivel 1: 🌱</button>
-        <button class="btn" onclick="startLevel(1)">Nivel 2: 🏠</button>
-        <button class="btn" onclick="startLevel(2)">Nivel 3: 🚀</button>
-        <button class="btn btn-home" onclick="showView('view-menu')">🏠 Menú Principal</button>
+        <h3>Selecciona Nivel</h3>
+        <button class="btn" onclick="startLevel(0)">Nivel 1: Esenciales (30)</button>
+        <button class="btn" onclick="startLevel(1)">Nivel 2: Cotidianos (30)</button>
+        <button class="btn" onclick="startLevel(2)">Nivel 3: Avanzados (30)</button>
+        <button class="btn" style="background:#eee; color:#333; box-shadow:none;" onclick="showView('view-menu')">Atrás</button>
     </div>
 
     <div id="view-study" class="view">
-        <div class="study-area">
-            <div class="kitty-tutor">
-                <div class="kitty-speech" id="st-kitty-msg">¡Mírame!</div>
-                <span class="kitty-hat-pro">👒</span>
-                🐱
-            </div>
-            
-            <div class="study-note">
-                <h2 id="st-es" style="margin:5px 0;"></h2>
-                <div class="verb-row"><span>P:</span> <span id="st-v1" style="color:var(--primary)"></span></div>
-                <div class="verb-row"><span>S:</span> <span id="st-v2" style="color:var(--primary)"></span></div>
-                <div class="verb-row"><span>Pt:</span> <span id="st-v3" style="color:var(--primary)"></span></div>
-            </div>
+        <div class="tutor-section" style="margin-top:0;">
+            <div class="kitty-face">🐱</div>
+            <div class="speech-bubble" id="st-kitty-msg">¡Aprende estos tiempos!</div>
         </div>
-        
-        <div class="slider-box">
-            Voz: <input type="range" id="voice-speed" min="0.5" max="1.1" step="0.1" value="0.9">
+        <div class="study-card">
+            <span id="st-es" class="verb-main"></span>
+            <div class="verb-row"><span>Presente:</span> <b id="st-v1" style="color:var(--primary)"></b></div>
+            <div class="verb-row"><span>Pasado:</span> <b id="st-v2" style="color:var(--primary)"></b></div>
+            <div class="verb-row"><span>Participio:</span> <b id="st-v3" style="color:var(--primary)"></b></div>
         </div>
-        <button class="btn" style="background:#00d2d3" onclick="speakCurrent()">Escuchar 🔊</button>
-        <button class="btn" onclick="nextStudy()">Siguiente Verbo</button>
-        <button class="btn btn-home" onclick="showView('view-menu')">🏠 Menú Principal</button>
+        <button class="btn" style="background:#00d2d3" onclick="speakCurrent()">Escuchar Voz 🔊</button>
+        <button class="btn" onclick="nextStudy()">Siguiente</button>
+        <button class="btn" style="background:#eee; color:#333; box-shadow:none;" onclick="showView('view-menu')">🏠 Menú</button>
     </div>
 
     <div id="view-practice" class="view">
-        <div class="study-area">
-            <div class="kitty-tutor">
-                <div class="kitty-speech" id="pr-kitty-msg">¿Lo sabes?</div>
-                <span class="kitty-hat-pro">👒</span>
-                🐱
-                <span id="heart" style="position:absolute; top:-40px; left:50px; opacity:0; color:red; transition:0.5s;">❤️</span>
-            </div>
-            
-            <div class="study-note" style="border: 2px solid var(--success)">
-                <h2 id="pr-es"></h2>
-                <input type="text" id="in1" placeholder="Infinitive (P)">
-                <input type="text" id="in2" placeholder="Past Simple (S)">
-                <input type="text" id="in3" placeholder="Past Participle (Pt)">
-            </div>
-        </div>
-        
+        <h3 id="pr-es" style="text-align:center;"></h3>
+        <input type="text" id="in1" class="btn answer-input" placeholder="Presente">
+        <input type="text" id="in2" class="btn answer-input" placeholder="Pasado">
+        <input type="text" id="in3" class="btn answer-input" placeholder="Participio">
         <button class="btn" style="background:var(--success)" onclick="checkAnswer()">Comprobar ✅</button>
-        <button class="btn btn-home" onclick="showView('view-menu')">🏠 Menú Principal</button>
     </div>
 
     <div id="view-results" class="view">
-        <h2>📊 Resumen del Tutor</h2>
-        <div id="summary-list" style="text-align:left; padding:10px;"></div>
-        <button class="btn" onclick="showView('view-menu')">Volver al Inicio</button>
+        <h3>📊 Tu Progreso</h3>
+        <ul id="summary-list"></ul>
+        <button class="btn" onclick="showView('view-menu')">Finalizar</button>
     </div>
 </div>
 
 <script>
-    const database = {
-        kids: [
-            [{es:"Correr 🏃", v1:"run", v2:"ran", v3:"run"}, {es:"Saltar 🦘", v1:"jump", v2:"jumped", v3:"jumped"}],
-            [{es:"Comer 🍎", v1:"eat", v2:"ate", v3:"eaten"}]
-        ],
-        teens: [
-            [{es:"Hacer ⚙️", v1:"do", v2:"did", v3:"done"}, {es:"Tener 🤲", v1:"have", v2:"had", v3:"had"}],
-            [{es:"Comprar 🛒", v1:"buy", v2:"bought", v3:"bought"}]
-        ]
-    };
+    // DATA COMPLETA (90 VERBOS VERIFICADOS)
+    const lvl1 = [
+        {es:"Ser / Estar", v1:"be", v2:"was", v3:"been"}, {es:"Convertirse", v1:"become", v2:"became", v3:"become"},
+        {es:"Empezar", v1:"begin", v2:"began", v3:"begun"}, {es:"Romper", v1:"break", v2:"broke", v3:"broken"},
+        {es:"Traer", v1:"bring", v2:"brought", v3:"brought"}, {es:"Construir", v1:"build", v2:"built", v3:"built"},
+        {es:"Comprar", v1:"buy", v2:"bought", v3:"bought"}, {es:"Elegir", v1:"choose", v2:"chose", v3:"chosen"},
+        {es:"Venir", v1:"come", v2:"came", v3:"come"}, {es:"Hacer (Do)", v1:"do", v2:"did", v3:"done"},
+        {es:"Beber", v1:"drink", v2:"drank", v3:"drunk"}, {es:"Conducir", v1:"drive", v2:"drove", v3:"driven"},
+        {es:"Comer", v1:"eat", v2:"ate", v3:"eaten"}, {es:"Caer", v1:"fall", v2:"fell", v3:"fallen"},
+        {es:"Sentir", v1:"feel", v2:"felt", v3:"felt"}, {es:"Encontrar", v1:"find", v2:"found", v3:"found"},
+        {es:"Obtener", v1:"get", v2:"got", v3:"gotten"}, {es:"Dar", v1:"give", v2:"gave", v3:"given"},
+        {es:"Ir", v1:"go", v2:"went", v3:"gone"}, {es:"Tener", v1:"have", v2:"had", v3:"had"},
+        {es:"Saber", v1:"know", v2:"knew", v3:"known"}, {es:"Hacer (Make)", v1:"make", v2:"made", v3:"made"},
+        {es:"Leer", v1:"read", v2:"read", v3:"read"}, {es:"Decir", v1:"say", v2:"said", v3:"said"},
+        {es:"Ver", v1:"see", v2:"saw", v3:"seen"}, {es:"Hablar", v1:"speak", v2:"spoke", v3:"spoken"},
+        {es:"Tomar", v1:"take", v2:"took", v3:"taken"}, {es:"Contar", v1:"tell", v2:"told", v3:"told"},
+        {es:"Pensar", v1:"think", v2:"thought", v3:"thought"}, {es:"Escribir", v1:"write", v2:"wrote", v3:"written"}
+    ];
 
-    const kittyMsgs = {
-        study: ["¡Mira el cuadro! 👀", "¡Escucha bien! 🔊", "¡Repítelo! 💬"],
-        practiceKids: ["¿Sabes cuál es? 🤔", "¡Vamos tú puedes! ⭐", "¡Casi lo tienes! 🌟"],
-        practiceTeens: ["¡Enfócate! 🧠", "¡La memoria es clave! 💡", "¡Nivel Pro! ⚡"]
-    };
+    const lvl2 = [
+        {es:"Surgir", v1:"arise", v2:"arose", v3:"arisen"}, {es:"Morder", v1:"bite", v2:"bit", v3:"bitten"},
+        {es:"Soplar", v1:"blow", v2:"blew", v3:"blown"}, {es:"Atrapar", v1:"catch", v2:"caught", v3:"caught"},
+        {es:"Cortar", v1:"cut", v2:"cut", v3:"cut"}, {es:"Dibujar", v1:"draw", v2:"drew", v3:"drawn"},
+        {es:"Soñar", v1:"dream", v2:"dreamt", v3:"dreamt"}, {es:"Alimentar", v1:"feed", v2:"fed", v3:"fed"},
+        {es:"Pelear", v1:"fight", v2:"fought", v3:"fought"}, {es:"Volar", v1:"fly", v2:"flew", v3:"flown"},
+        {es:"Olvidar", v1:"forget", v2:"forgot", v3:"forgotten"}, {es:"Perdonar", v1:"forgive", v2:"forgave", v3:"forgiven"},
+        {es:"Congelar", v1:"freeze", v2:"froze", v3:"frozen"}, {es:"Crecer", v1:"grow", v2:"grew", v3:"grown"},
+        {es:"Oír", v1:"hear", v2:"heard", v3:"heard"}, {es:"Esconder", v1:"hide", v2:"hid", v3:"hidden"},
+        {es:"Sostener", v1:"hold", v2:"held", v3:"held"}, {es:"Mantener", v1:"keep", v2:"kept", v3:"kept"},
+        {es:"Guiar", v1:"lead", v2:"led", v3:"led"}, {es:"Dejar", v1:"leave", v2:"left", v3:"left"},
+        {es:"Prestar", v1:"lend", v2:"lent", v3:"lent"}, {es:"Perder", v1:"lose", v2:"lost", v3:"lost"},
+        {es:"Meet", v1:"meet", v2:"met", v3:"met"}, {es:"Pagar", v1:"pay", v2:"paid", v3:"paid"},
+        {es:"Correr", v1:"run", v2:"ran", v3:"run"}, {es:"Enviar", v1:"send", v2:"sent", v3:"sent"},
+        {es:"Cantar", v1:"sing", v2:"sang", v3:"sung"}, {es:"Sentarse", v1:"sit", v2:"sat", v3:"sat"},
+        {es:"Dormir", v1:"sleep", v2:"slept", v3:"slept"}, {es:"Gastar", v1:"spend", v2:"spent", v3:"spent"}
+    ];
 
-    let user = { name: "" };
-    let curMode = "", curLvl = 0, curIdx = 0, results = [], isGameMode = false;
+    const lvl3 = [
+        {es:"Doblar", v1:"bend", v2:"bent", v3:"bent"}, {es:"Sangrar", v1:"bleed", v2:"bled", v3:"bled"},
+        {es:"Criar", v1:"breed", v2:"bred", v3:"bred"}, {es:"Aferrarse", v1:"cling", v2:"clung", v3:"clung"},
+        {es:"Negociar", v1:"deal", v2:"dealt", v3:"dealt"}, {es:"Cavar", v1:"dig", v2:"dug", v3:"dug"},
+        {es:"Huir", v1:"flee", v2:"fled", v3:"fled"}, {es:"Arrojar", v1:"fling", v2:"flung", v3:"flung"},
+        {es:"Predecir", v1:"forecast", v2:"forecast", v3:"forecast"}, {es:"Abandonar", v1:"forsake", v2:"forsook", v3:"forsaken"},
+        {es:"Arrodillarse", v1:"kneel", v2:"knelt", v3:"knelt"}, {es:"Saltar (Leap)", v1:"leap", v2:"leapt", v3:"leapt"},
+        {es:"Apoyarse", v1:"lean", v2:"leant", v3:"leant"}, {es:"Equivocarse", v1:"mistake", v2:"mistook", v3:"mistaken"},
+        {es:"Superar", v1:"overcome", v2:"overcame", v3:"overcome"}, {es:"Buscar", v1:"seek", v2:"sought", v3:"sought"},
+        {es:"Sacudir", v1:"shake", v2:"shook", v3:"shaken"}, {es:"Mudar", v1:"shed", v2:"shed", v3:"shed"},
+        {es:"Encoger", v1:"shrink", v2:"shrank", v3:"shrunk"}, {es:"Deslizarse", v1:"slide", v2:"slid", v3:"slid"},
+        {es:"Escupir", v1:"spit", v2:"spat", v3:"spat"}, {es:"Dividir", v1:"split", v2:"split", v3:"split"},
+        {es:"Extender", v1:"spread", v2:"spread", v3:"spread"}, {es:"Brotar", v1:"spring", v2:"sprang", v3:"sprung"},
+        {es:"Pegar", v1:"stick", v2:"stuck", v3:"stuck"}, {es:"Picar", v1:"sting", v2:"stung", v3:"stung"},
+        {es:"Caminar", v1:"stride", v2:"strode", v3:"stridden"}, {es:"Jurar", v1:"swear", v2:"swore", v3:"sworn"},
+        {es:"Barrer", v1:"sweep", v2:"swept", v3:"swept"}, {es:"Experimentar", v1:"undergo", v2:"underwent", v3:"undergone"}
+    ];
 
+    const data = [lvl1, lvl2, lvl3];
+    let user = { name: "", xp: 0, lvls: 0, photo: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" };
+    let curLvl = 0, curIdx = 0, results = [], curMode = "", isGameMode = false;
+    const synth = window.speechSynthesis;
+
+    // INICIAR
     window.onload = () => {
-        const saved = localStorage.getItem('verbUserTutorV4');
-        if(saved) { user = JSON.parse(saved); showMenu(); } 
-        else { showView('view-login'); }
+        const saved = localStorage.getItem('verbAppV6');
+        if(saved) { user = JSON.parse(saved); showView('view-menu'); }
     };
 
     function showView(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        
-        const music = document.getElementById('bg-music');
-        music.volume = 0.15; // Música suave
-        music.play().catch(() => {});
+        updateHeader();
     }
 
-    function saveUser() {
-        user.name = document.getElementById('user-name').value || "Estudiante";
-        localStorage.setItem('verbUserTutorV4', JSON.stringify(user));
-        showMenu();
-    }
-
-    function showMenu() {
-        document.getElementById('welcome-msg').innerText = `¡Hola, ${user.name}!`;
+    function initApp() {
+        const n = document.getElementById('user-name').value;
+        if(!n) return alert("¡Dime tu nombre!");
+        user.name = n;
+        save();
+        document.getElementById('main-header').style.display = 'flex';
+        document.getElementById('bg-music').play();
         showView('view-menu');
     }
 
-    function selectMode(mode, theme = '') {
-        curMode = mode; isGameMode = false;
-        document.getElementById('app-box').className = "app " + (mode === 'kids' ? 'kids-theme' : '');
-        if(theme) document.getElementById('body-bg').className = `theme-${theme}`;
+    function updateHeader() {
+        document.getElementById('header-name').innerText = user.name;
+        document.getElementById('header-xp').innerText = `⭐ ${user.xp}`;
+        document.getElementById('header-pic').src = user.photo;
+        document.getElementById('profile-img-big').src = user.photo;
+        document.getElementById('profile-user-name').innerText = user.name;
+        document.getElementById('stat-xp').innerText = user.xp;
+        document.getElementById('stat-lvls').innerText = user.lvls;
+    }
+
+    function selectMode(m, t = '') {
+        curMode = m; isGameMode = false;
+        document.getElementById('app-box').className = "app-container " + (m === 'kids' ? 'kids-theme' : '');
+        if(t) document.getElementById('body-bg').className = `theme-${t}`;
         showView('view-levels');
     }
 
-    function startLevel(lvl) {
-        curLvl = lvl; curIdx = 0; results = [];
-        showView('view-study');
-        updateStudy();
+    function startLevel(l) {
+        curLvl = l; curIdx = 0; results = [];
+        showView('view-study'); updateStudy();
     }
 
     function updateStudy() {
-        const v = database[curMode][curLvl][curIdx];
+        const v = data[curLvl][curIdx];
         document.getElementById('st-es').innerText = v.es;
         document.getElementById('st-v1').innerText = v.v1;
         document.getElementById('st-v2').innerText = v.v2;
         document.getElementById('st-v3').innerText = v.v3;
-        // Mensaje del Gatito Tutor
-        document.getElementById('st-kitty-msg').innerText = kittyMsgs.study[Math.floor(Math.random()*kittyMsgs.study.length)];
         speakCurrent();
     }
 
     function speakCurrent() {
-        const v = (isGameMode) ? database.kids[0][curIdx] : database[curMode][curLvl][curIdx];
-        const msg = new SpeechSynthesisUtterance(`${v.v1}, ${v.v2}, ${v.v3}`);
-        msg.rate = document.getElementById('voice-speed').value;
-        msg.lang = 'en-US';
-        window.speechSynthesis.speak(msg);
+        synth.cancel(); // Detiene audios en cola para fluidez
+        const v = data[curLvl][curIdx];
+        const m = new SpeechSynthesisUtterance(`${v.v1}, ${v.v2}, ${v.v3}`);
+        m.lang = 'en-US'; m.rate = 0.85;
+        synth.speak(m);
     }
 
     function nextStudy() {
-        if(curIdx < database[curMode][curLvl].length - 1) { curIdx++; updateStudy(); }
+        if(curIdx < data[curLvl].length - 1) { curIdx++; updateStudy(); }
         else { curIdx = 0; showView('view-practice'); loadPractice(); }
     }
 
     function loadPractice() {
-        const v = (isGameMode) ? database.kids[0][curIdx] : database[curMode][curLvl][curIdx];
-        document.getElementById('pr-es').innerText = `¿${v.es}?`;
+        const v = data[curLvl][curIdx];
+        document.getElementById('pr-es').innerText = `¿Cómo escribes "${v.es}"?`;
         document.querySelectorAll('#view-practice input').forEach(i => i.value = "");
-        // Mensaje de Práctica adaptado
-        const msgs = curMode === 'kids' ? kittyMsgs.practiceKids : kittyMsgs.practiceTeens;
-        document.getElementById('pr-kitty-msg').innerText = msgs[Math.floor(Math.random()*msgs.length)];
     }
 
     function checkAnswer() {
-        const v = (isGameMode) ? database.kids[0][curIdx] : database[curMode][curLvl][curIdx];
+        const v = data[curLvl][curIdx];
         const r = [document.getElementById('in1').value.trim().toLowerCase(), 
                    document.getElementById('in2').value.trim().toLowerCase(), 
                    document.getElementById('in3').value.trim().toLowerCase()];
-
-        const correct = (r[0] === v.v1 && r[1] === v.v2 && r[2] === v.v3);
-        results.push({verb: v.es, status: correct ? '✅ Pro' : `❌ Repasar (${v.v1}, ${v.v2}, ${v.v3})`});
         
-        if(correct) {
-            new Audio('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3').play().catch(()=>{});
-            if(isGameMode) kittyHappy();
-        } else {
-            document.getElementById('pr-kitty-msg').innerText = "¡Tranquilo, aprende del error! 🍎";
-        }
+        const isOk = (r[0] === v.v1 && r[1] === v.v2 && r[2] === v.v3);
+        results.push({v: v.es, res: isOk ? '✅ Bien' : `❌ Era: ${v.v1}, ${v.v2}, ${v.v3}`});
+        if(isOk) user.xp += 10;
 
         curIdx++;
-        const limit = isGameMode ? database.kids[0].length : database[curMode][curLvl].length;
-
-        if(curIdx < limit) {
-            setTimeout(loadPractice, 600); // Pequeña pausa para Feedback visual
-        } else {
-            showSummary();
-        }
-    }
-
-    function kittyHappy() {
-        document.getElementById('pr-kitty-msg').innerText = "¡Ñam Ñam Rico! 🍖";
-        const h = document.getElementById('heart');
-        h.style.opacity = '1';
-        h.style.transform = 'translateY(-20px)';
-        setTimeout(() => { h.style.opacity = '0'; h.style.transform = 'translateY(0)'; }, 1000);
+        if(curIdx < data[curLvl].length) loadPractice();
+        else { user.lvls++; save(); showSummary(); }
     }
 
     function showSummary() {
-        let html = "<ul>";
-        results.forEach(r => html += `<li>${r.verb}: ${r.status}</li>`);
-        html += "</ul><p>¡Tutor Kitty dice que vas genial! 🐱🚀</p>";
-        document.getElementById('summary-list').innerHTML = html;
+        let h = "";
+        results.forEach(r => h += `<li><b>${r.v}:</b> ${r.res}</li>`);
+        document.getElementById('summary-list').innerHTML = h;
         showView('view-results');
     }
 
+    function updatePhoto(e) {
+        const f = e.target.files[0];
+        const r = new FileReader();
+        r.onload = () => { user.photo = r.result; save(); updateHeader(); };
+        r.readAsDataURL(f);
+    }
+
+    function save() { localStorage.setItem('verbAppV6', JSON.stringify(user)); }
+
     function startKittyGame() {
-        isGameMode = true; curMode = 'kids'; curIdx = 0; results = [];
-        showView('view-practice');
-        loadPractice();
-        document.getElementById('pr-kitty-msg').innerText = "¿Tengo hambre! 🐟";
+        isGameMode = true; curLvl = 0; curIdx = 0; results = [];
+        showView('view-practice'); loadPractice();
     }
 </script>
 </body>
