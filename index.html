@@ -3,121 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verb Academy: Mastery Edition</title>
+    <title>Verb Academy: Legend Edition</title>
     <style>
         :root {
-            --kids-color: #ff6b81; --teens-color: #6c5ce7;
-            --success: #1dd1a1; --bg: #f0f4f8;
+            --primary: #6c5ce7; --success: #1dd1a1; --bg: #f0f4f8;
+            --font-main: 'Segoe UI', sans-serif;
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .app { background: white; width: 95%; max-width: 500px; padding: 25px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; }
-        
-        .view { display: none; animation: fadeIn 0.4s ease; }
-        .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        .btn { width: 100%; padding: 16px; margin: 10px 0; border: none; border-radius: 18px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; color: white; box-shadow: 0 5px 0 rgba(0,0,0,0.1); }
-        .btn:active { transform: translateY(3px); box-shadow: none; }
-        .btn-main { background: var(--teens-color); }
-        .btn-kids { background: var(--kids-color); }
+        /* ESTILO CRAYÓN (NIÑOS) */
+        .kids-theme { 
+            background: #fff9e6 !important; 
+            font-family: 'Comic Sans MS', cursive !important;
+            border: 8px solid #ffcc00;
+        }
+        .kids-theme .btn { border-radius: 50px; border: 4px dashed #fff; }
+
+        /* TEMAS ADOLESCENTES */
+        .theme-hellokitty { --primary: #ff9ff3; --bg: #fff0f5; }
+        .theme-batman { --primary: #2d3436; --bg: #1e272e; color: #f1c40f; }
+        .theme-deadpool { --primary: #d63031; --bg: #2d3436; color: white; }
+
+        body { font-family: var(--font-main); background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; transition: 0.5s; }
+        .app { background: white; width: 95%; max-width: 500px; padding: 25px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; position: relative; }
         
-        .card { background: #fff; border: 3px solid #f0f0f0; padding: 25px; border-radius: 25px; margin: 15px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .img-placeholder { font-size: 5rem; margin-bottom: 15px; display: block; }
+        .view { display: none; }
+        .view.active { display: block; animation: zoomIn 0.3s; }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .btn { width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; color: white; background: var(--primary); transition: 0.2s; }
+        .btn:hover { filter: brightness(1.1); }
+
+        .card { background: #fff; border: 3px solid #eee; padding: 20px; border-radius: 20px; margin: 15px 0; color: #333; }
+        .img-emoji { font-size: 5rem; display: block; margin-bottom: 10px; }
         
-        input { width: 100%; padding: 14px; margin: 8px 0; border: 2px solid #eee; border-radius: 12px; text-align: center; box-sizing: border-box; font-size: 1rem; transition: 0.3s; }
-        input:focus { border-color: var(--teens-color); outline: none; background: #fdfdff; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 10px; text-align: center; font-size: 1rem; }
+
+        .lives { font-size: 1.5rem; color: #ff4757; margin-bottom: 10px; }
         
-        .progress-bar { height: 10px; background: #eee; border-radius: 5px; margin: 20px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--success); width: 0%; transition: 0.5s; }
-        .label-verb { font-size: 0.9rem; color: #888; margin: 0; }
+        /* DIPLOMA */
+        #diploma { background: #fffceb; border: 10px double #d4af37; padding: 30px; color: #333; }
     </style>
 </head>
-<body>
+<body id="body-bg">
 
-<div class="app">
-    <div id="view-login" class="view active">
-        <h1>🌟 Verb Academy</h1>
-        <p>¡Hola! Cuéntanos, ¿cuál es tu nombre?</p>
-        <input type="text" id="user-name" placeholder="Tu nombre mágico">
-        <button class="btn btn-main" onclick="saveUser()">¡Empezar a aprender!</button>
+<div class="app" id="app-box">
+    <div id="view-login" class="view">
+        <h1>🎒 Verb Academy</h1>
+        <p>¡Bienvenido de nuevo!</p>
+        <input type="text" id="user-name" placeholder="Tu nombre">
+        <button class="btn" onclick="saveUser()">Comenzar</button>
     </div>
 
     <div id="view-menu" class="view">
         <h2 id="welcome-msg"></h2>
-        <p>Elige tu camino de hoy:</p>
-        <button class="btn btn-kids" onclick="showLevels('kids')">🧸 Sección Niños</button>
-        <button class="btn btn-main" onclick="showLevels('teens')">⚡ Sección Adolescentes</button>
+        <div class="lives">❤️ <span id="lives-count">3</span> | ⭐ <span id="xp-count">0</span></div>
+        <button class="btn" style="background:#ff6b81" onclick="selectMode('kids')">🧸 Modo Niños (Crayón)</button>
+        <button class="btn" style="background:#6c5ce7" onclick="showThemeSelect()">⚡ Modo Adolescente (Temas)</button>
+    </div>
+
+    <div id="view-themes" class="view">
+        <h2>Elige tu estilo:</h2>
+        <button class="btn" style="background:#ff9ff3" onclick="selectMode('teens', 'hellokitty')">Hello Kitty 🎀</button>
+        <button class="btn" style="background:#2d3436; color:#f1c40f" onclick="selectMode('teens', 'batman')">Batman 🦇</button>
+        <button class="btn" style="background:#d63031" onclick="selectMode('teens', 'deadpool')">Deadpool ⚔️</button>
     </div>
 
     <div id="view-levels" class="view">
-        <h2 id="level-title">Niveles</h2>
-        <button class="btn btn-main" onclick="startStudy(0)" style="background:#4cd137">🌱 Nivel 1: Verbos Básicos</button>
-        <button class="btn btn-main" onclick="startStudy(1)" style="background:#00a8ff">🏠 Nivel 2: Día a Día</button>
-        <button class="btn btn-main" onclick="startStudy(2)" style="background:#e84118">🚀 Nivel 3: Expertos</button>
-        <button onclick="showView('view-menu')" style="background:none; border:none; color:#888; cursor:pointer; margin-top:10px;">← Cambiar de sección</button>
+        <h2 id="lvl-head">Niveles</h2>
+        <button class="btn" onclick="startLevel(0)">Nivel 1: Esenciales</button>
+        <button class="btn" onclick="startLevel(1)">Nivel 2: Intermedio</button>
+        <button class="btn" onclick="startLevel(2)">Nivel 3: Maestro</button>
+        <button onclick="location.reload()" style="background:none; border:none; color:gray; cursor:pointer;">← Salir</button>
     </div>
 
     <div id="view-study" class="view">
         <div class="card">
-            <span id="study-img" class="img-placeholder"></span>
-            <h2 id="study-es" style="margin:5px 0"></h2>
-            <hr style="border:1px solid #eee">
-            <p class="label-verb">Presente</p><b id="study-v1" style="font-size:1.4rem"></b>
-            <p class="label-verb">Pasado</p><b id="study-v2" style="font-size:1.4rem"></b>
-            <p class="label-verb">Participio</p><b id="study-v3" style="font-size:1.4rem"></b>
+            <span id="st-img" class="img-emoji"></span>
+            <h2 id="st-es"></h2>
+            <button class="btn" onclick="speakCurrent()" style="background:#00d2d3">Escuchar Pronunciación 🔊</button>
+            <p>V1: <b id="st-v1"></b> | V2: <b id="st-v2"></b> | V3: <b id="st-v3"></b></p>
         </div>
-        <button class="btn btn-main" id="study-next-btn" onclick="nextStudyCard()">Siguiente Verbo</button>
+        <button class="btn" id="study-btn" onclick="nextStudy()">Siguiente</button>
     </div>
 
     <div id="view-practice" class="view">
-        <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
-        <h2 id="practice-es"></h2>
-        <p>Escribe los 3 tiempos en inglés:</p>
-        <input type="text" id="in1" placeholder="Infinitive (Present)">
-        <input type="text" id="in2" placeholder="Past Simple">
-        <input type="text" id="in3" placeholder="Past Participle">
-        <button class="btn btn-main" style="background:var(--success)" onclick="checkAnswer()">Comprobar Respuesta ✅</button>
+        <h2 id="pr-es"></h2>
+        <input type="text" id="in1" placeholder="Presente">
+        <input type="text" id="in2" placeholder="Pasado">
+        <input type="text" id="in3" placeholder="Participio">
+        <button class="btn" style="background:var(--success)" onclick="checkAnswer()">Comprobar ✅</button>
     </div>
 
-    <div id="view-results" class="view">
-        <h2 id="res-title">🎉 ¡Nivel Superado!</h2>
-        <div class="card" style="background:#f9f9f9; text-align:left;">
-            <p id="final-score"></p>
-            <hr>
-            <b>📢 Recomendación de Profe:</b>
-            <p id="recommendation"></p>
+    <div id="view-win" class="view">
+        <div id="diploma">
+            <h1 style="color:#d4af37">🏆 DIPLOMA 🏆</h1>
+            <p>Se otorga con honor a:</p>
+            <h2 id="dip-name"></h2>
+            <p>Por dominar los verbos en inglés en el nivel seleccionado.</p>
+            <small id="dip-date"></small>
         </div>
-        <button class="btn btn-main" onclick="showView('view-menu')">Volver al Menú</button>
+        <button class="btn" onclick="location.reload()">Volver a jugar</button>
     </div>
 </div>
 
 <script>
-    // LISTA AMPLIA DE VERBOS
     const database = {
         kids: [
-            // NIVEL 1: BÁSICOS
-            [{es:"Correr", img:"🏃", v1:"run", v2:"ran", v3:"run"}, {es:"Saltar", img:"🦘", v1:"jump", v2:"jumped", v3:"jumped"}, {es:"Ver", img:"👁️", v1:"see", v2:"saw", v3:"seen"}, {es:"Ir", img:"🚗", v1:"go", v2:"went", v3:"gone"}, {es:"Cantar", img:"🎤", v1:"sing", v2:"sang", v3:"sung"}],
-            // NIVEL 2: DÍA A DÍA
-            [{es:"Comer", img:"🍎", v1:"eat", v2:"ate", v3:"eaten"}, {es:"Beber", img:"🥤", v1:"drink", v2:"drank", v3:"drunk"}, {es:"Dormir", img:"😴", v1:"sleep", v2:"slept", v3:"slept"}, {es:"Cocinar", img:"🍳", v1:"cook", v2:"cooked", v3:"cooked"}, {es:"Lavar", img:"🧼", v1:"wash", v2:"washed", v3:"washed"}],
-            // NIVEL 3: AVANZADO
-            [{es:"Volar", img:"✈️", v1:"fly", v2:"flew", v3:"flown"}, {es:"Nadar", img:"🏊", v1:"swim", v2:"swam", v3:"swum"}, {es:"Dibujar", img:"🎨", v1:"draw", v2:"drew", v3:"drawn"}, {es:"Montar", img:"🚲", v1:"ride", v2:"rode", v3:"ridden"}, {es:"Esconder", img:"🙈", v1:"hide", v2:"hid", v3:"hidden"}]
+            [{es:"Correr", img:"🏃", v1:"run", v2:"ran", v3:"run"}, {es:"Saltar", img:"🦘", v1:"jump", v2:"jumped", v3:"jumped"}],
+            [{es:"Comer", img:"🍎", v1:"eat", v2:"ate", v3:"eaten"}],
+            [{es:"Volar", img:"✈️", v1:"fly", v2:"flew", v3:"flown"}]
         ],
         teens: [
-            // NIVEL 1: BÁSICOS
-            [{es:"Hacer", img:"⚙️", v1:"do", v2:"did", v3:"done"}, {es:"Tener", img:"🤲", v1:"have", v2:"had", v3:"had"}, {es:"Decir", img:"💬", v1:"say", v2:"said", v3:"said"}, {es:"Venir", img:"👋", v1:"come", v2:"came", v3:"come"}, {es:"Saber", img:"🧠", v1:"know", v2:"knew", v3:"known"}],
-            // NIVEL 2: DÍA A DÍA
-            [{es:"Comprar", img:"🛒", v1:"buy", v2:"bought", v3:"bought"}, {es:"Traer", img:"📦", v1:"bring", v2:"brought", v3:"brought"}, {es:"Pensar", img:"🤔", v1:"think", v2:"thought", v3:"thought"}, {es:"Sentir", img:"❤️", v1:"feel", v2:"felt", v3:"felt"}, {es:"Elegir", img:"✅", v1:"choose", v2:"chose", v3:"chosen"}],
-            // NIVEL 3: AVANZADO
-            [{es:"Olvidar", img:"❓", v1:"forget", v2:"forgot", v3:"forgotten"}, {es:"Romper", img:"💔", v1:"break", v2:"broke", v3:"broken"}, {es:"Entender", img:"💡", v1:"understand", v2:"understood", v3:"understood"}, {es:"Hablar", img:"🗣️", v1:"speak", v2:"spoke", v3:"spoken"}, {es:"Escribir", img:"✍️", v1:"write", v2:"wrote", v3:"written"}]
+            [{es:"Hacer", img:"⚙️", v1:"do", v2:"did", v3:"done"}, {es:"Tener", img:"🤲", v1:"have", v2:"had", v3:"had"}],
+            [{es:"Comprar", img:"🛒", v1:"buy", v2:"bought", v3:"bought"}],
+            [{es:"Romper", img:"💔", v1:"break", v2:"broke", v3:"broken"}]
         ]
     };
 
-    let currentUser = "";
-    let currentMode = "";
-    let currentLevel = 0;
-    let currentIndex = 0;
-    let mistakes = [];
-    const bell = new Audio('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3');
+    let user = { name: "", xp: 0, lives: 3 };
+    let curMode = "", curLvl = 0, curIdx = 0;
+
+    // CARGAR PROGRESO AL INICIAR
+    window.onload = () => {
+        const saved = localStorage.getItem('verbUser');
+        if(saved) {
+            user = JSON.parse(saved);
+            showMenu();
+        } else {
+            showView('view-login');
+        }
+    };
 
     function showView(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -125,82 +140,105 @@
     }
 
     function saveUser() {
-        currentUser = document.getElementById('user-name').value || "Estudiante";
-        document.getElementById('welcome-msg').innerText = `¡Hola, ${currentUser}!`;
+        user.name = document.getElementById('user-name').value || "Explorador";
+        localStorage.setItem('verbUser', JSON.stringify(user));
+        showMenu();
+    }
+
+    function showMenu() {
+        document.getElementById('welcome-msg').innerText = `¡Hola, ${user.name}!`;
+        document.getElementById('xp-count').innerText = user.xp;
+        document.getElementById('lives-count').innerText = user.lives;
         showView('view-menu');
     }
 
-    function showLevels(mode) {
-        currentMode = mode;
-        document.getElementById('level-title').innerText = mode === 'kids' ? "🧸 Niveles Infantiles" : "⚡ Niveles Adolescentes";
+    function showThemeSelect() { showView('view-themes'); }
+
+    function selectMode(mode, theme = '') {
+        curMode = mode;
+        const appBox = document.getElementById('app-box');
+        const body = document.getElementById('body-bg');
+        
+        // Limpiar estilos anteriores
+        appBox.className = "app";
+        body.className = "";
+
+        if(mode === 'kids') appBox.classList.add('kids-theme');
+        if(theme) {
+            body.classList.add(`theme-${theme}`);
+            document.documentElement.style.setProperty('--primary', 
+                theme === 'hellokitty' ? '#ff9ff3' : (theme === 'batman' ? '#2d3436' : '#d63031'));
+        }
         showView('view-levels');
     }
 
-    function startStudy(lvl) {
-        currentLevel = lvl;
-        currentIndex = 0;
-        mistakes = [];
+    function startLevel(lvl) {
+        curLvl = lvl; curIdx = 0;
         showView('view-study');
-        updateStudyCard();
+        updateStudy();
     }
 
-    function updateStudyCard() {
-        const v = database[currentMode][currentLevel][currentIndex];
-        document.getElementById('study-img').innerText = v.img;
-        document.getElementById('study-es').innerText = v.es;
-        document.getElementById('study-v1').innerText = v.v1;
-        document.getElementById('study-v2').innerText = v.v2;
-        document.getElementById('study-v3').innerText = v.v3;
-        
-        const isLast = currentIndex === database[currentMode][currentLevel].length - 1;
-        document.getElementById('study-next-btn').innerText = isLast ? "¡Listo! Empezar Práctica" : "Siguiente Verbo";
+    function updateStudy() {
+        const v = database[curMode][curLvl][curIdx];
+        document.getElementById('st-img').innerText = v.img;
+        document.getElementById('st-es').innerText = v.es;
+        document.getElementById('st-v1').innerText = v.v1;
+        document.getElementById('st-v2').innerText = v.v2;
+        document.getElementById('st-v3').innerText = v.v3;
+        speakCurrent();
     }
 
-    function nextStudyCard() {
-        if (currentIndex < database[currentMode][currentLevel].length - 1) {
-            currentIndex++;
-            updateStudyCard();
+    function speakCurrent() {
+        const v = database[curMode][curLvl][curIdx];
+        const msg = new SpeechSynthesisUtterance(`${v.v1}, ${v.v2}, ${v.v3}`);
+        msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
+    }
+
+    function nextStudy() {
+        if(curIdx < database[curMode][curLvl].length - 1) {
+            curIdx++; updateStudy();
         } else {
-            currentIndex = 0;
-            showView('view-practice');
-            loadPractice();
+            curIdx = 0; showView('view-practice'); loadPractice();
         }
     }
 
     function loadPractice() {
-        const v = database[currentMode][currentLevel][currentIndex];
-        document.getElementById('practice-es').innerText = `${v.img} ¿Cómo se dice "${v.es}"?`;
+        const v = database[curMode][curLvl][curIdx];
+        document.getElementById('pr-es').innerText = `¿${v.es}?`;
         document.querySelectorAll('#view-practice input').forEach(i => i.value = "");
-        document.getElementById('prog-fill').style.width = (currentIndex / database[currentMode][currentLevel].length * 100) + "%";
-        document.getElementById('in1').focus();
     }
 
     function checkAnswer() {
-        const v = database[currentMode][currentLevel][currentIndex];
-        const r1 = document.getElementById('in1').value.trim().toLowerCase();
-        const r2 = document.getElementById('in2').value.trim().toLowerCase();
-        const r3 = document.getElementById('in3').value.trim().toLowerCase();
+        const v = database[curMode][curLvl][curIdx];
+        const r = [document.getElementById('in1').value.trim().toLowerCase(), 
+                   document.getElementById('in2').value.trim().toLowerCase(), 
+                   document.getElementById('in3').value.trim().toLowerCase()];
 
-        if (r1 === v.v1 && r2 === v.v2 && r3 === v.v3) {
-            bell.play();
-            currentIndex++;
-            if (currentIndex < database[currentMode][currentLevel].length) {
-                loadPractice();
-            } else {
-                finishLevel();
-            }
+        if(r[0] === v.v1 && r[1] === v.v2 && r[2] === v.v3) {
+            new Audio('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3').play();
+            user.xp += 10;
+            curIdx++;
+            if(curIdx < database[curMode][curLvl].length) loadPractice();
+            else showDiploma();
         } else {
-            if(!mistakes.includes(v.es)) mistakes.push(v.es);
-            alert("¡Oh-oh! Revisa bien la escritura de los 3 tiempos.");
+            user.lives--;
+            alert("¡Error! Pierdes una vida ❤️");
+            if(user.lives <= 0) { alert("¡Sin vidas! Reiniciando..."); location.reload(); }
         }
+        localStorage.setItem('verbUser', JSON.stringify(user));
+        updateUI();
     }
 
-    function finishLevel() {
-        const rec = mistakes.length > 0 
-            ? `¡Buen trabajo! Pero noté que te costaron estos verbos: ${mistakes.join(", ")}. Repásalos mañana para que no se te olviden.` 
-            : "¡Impresionante! Tienes una memoria de elefante. No tuviste ni un solo error.";
-        document.getElementById('recommendation').innerText = rec;
-        showView('view-results');
+    function updateUI() {
+        document.getElementById('xp-count').innerText = user.xp;
+        document.getElementById('lives-count').innerText = user.lives;
+    }
+
+    function showDiploma() {
+        document.getElementById('dip-name').innerText = user.name;
+        document.getElementById('dip-date').innerText = new Date().toLocaleDateString();
+        showView('view-win');
     }
 </script>
 </body>
