@@ -3,347 +3,435 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Verb Academy Pro | Oficial</title>
+    <title>Verb Academy Master Pro</title>
     <style>
         :root {
-            --primary: #6c5ce7; --success: #1dd1a1; --bg: #f0f4f8;
-            --pink-kitty: #ff9ff3; --blue-hat: #4834d4;
-            --kids-yellow: #fff200; --kids-green: #32ff7e; --kids-pink: #ff9fcf;
+            --primary: #6c5ce7; --success: #1dd1a1; --error: #ff7675; --bg: #f0f4f8;
+            --card: #ffffff; --text: #2d3436; --shadow: rgba(0,0,0,0.1);
         }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body.dark-mode {
+            --bg: #1e272e; --card: #2f3640; --text: #f5f6fa; --shadow: rgba(0,0,0,0.4);
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; line-height: 1.6; }
         
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: var(--bg); margin: 0; padding: 0;
-            display: flex; justify-content: center; min-height: 100vh;
-        }
+        .app-container { width: 100%; max-width: 500px; min-height: 100dvh; display: flex; flex-direction: column; background: var(--bg); position: relative; }
 
-        /* DISEÑO TIPO APP MÓVIL */
-        .app-container {
-            width: 100%; max-width: 500px; background: white; min-height: 100vh;
-            display: flex; flex-direction: column; position: relative;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1); overflow-x: hidden;
-        }
+        /* HEADER FIJO */
+        .header { background: var(--primary); color: white; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; height: 65px; box-shadow: 0 2px 10px var(--shadow); }
+        .profile-group { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .profile-img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; object-fit: cover; background: #eee; }
 
-        /* TEMAS DINÁMICOS */
-        .kids-theme { background: linear-gradient(160deg, var(--kids-yellow), #ffffff) !important; }
-        .kids-theme .btn { border: 3px solid #000; color: #000 !important; }
-        .theme-hellokitty { --primary: #ff9ff3; --bg: #fff0f5; }
-        .theme-batman { --primary: #2d3436; --bg: #1e272e; color: #f1c40f; }
-        .theme-deadpool { --primary: #d63031; --bg: #2d3436; color: white; }
+        /* VISTAS */
+        .view { display: none; padding: 20px; flex-direction: column; animation: fadeIn 0.3s ease-out; }
+        .view.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .header { background: var(--primary); color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
-        .profile-pic-mini { width: 42px; height: 42px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
-
-        .view { display: none; padding: 20px; flex-grow: 1; }
-        .view.active { display: flex; flex-direction: column; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* GATITO TUTOR */
-        .tutor-section { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: #fff; border-radius: 20px; padding: 12px; border: 2px solid #eee; }
-        .kitty-face { font-size: 55px; animation: bounce 2s infinite; }
-        .speech-bubble { flex: 1; font-size: 0.9rem; color: #444; font-weight: 500; }
-
-        .btn { 
-            width: 100%; padding: 16px; border: none; border-radius: 18px; 
-            font-size: 1rem; font-weight: 700; cursor: pointer; 
-            margin: 8px 0; color: white; background: var(--primary);
-            transition: transform 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.15);
-        }
-        .btn:active { transform: translateY(3px); box-shadow: none; }
-
-        /* TARJETAS DE ESTUDIO */
-        .study-card { border: 2px solid var(--primary); border-radius: 20px; padding: 20px; background: #fff; margin-bottom: 15px; }
-        .verb-main { font-size: 1.8rem; font-weight: 800; color: #2d3436; margin-bottom: 15px; display: block; }
-        .verb-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f1f1; font-size: 1.1rem; }
+        /* CARDS Y GRIDS */
+        .card { background: var(--card); border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 4px 12px var(--shadow); margin-bottom: 15px; border: 2px solid transparent; transition: 0.3s; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         
-        /* INPUTS */
-        input.answer-input { 
-            background: #f8f9fa; color: #333; border: 2px solid #e2e8f0; 
-            text-align: center; font-size: 1.1rem; margin-bottom: 10px;
+        /* EL PANEL DE SUB-NIVELES (LOS CUADRITOS) */
+        .sub-levels-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
+        .sub-lvl-node { 
+            aspect-ratio: 1; background: var(--card); border: 2px solid #ddd; border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; font-weight: bold; 
+            cursor: pointer; transition: 0.2s; color: var(--text);
         }
-        input.answer-input:focus { border-color: var(--primary); outline: none; background: #fff; }
+        .sub-lvl-node.completed { background: var(--success) !important; color: white !important; border-color: #1aa37a; }
+        .sub-lvl-node.current { border-color: var(--primary); border-width: 3px; box-shadow: 0 0 10px var(--primary); transform: scale(1.05); }
 
-        /* PERFIL */
-        .profile-content { text-align: center; padding-top: 10px; }
-        #profile-img-big { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--primary); object-fit: cover; margin-bottom: 10px; }
-        .stats-box { display: flex; gap: 10px; margin: 15px 0; }
-        .stat-card { flex: 1; background: #f1f2f6; padding: 10px; border-radius: 15px; }
+        /* ZONA DE ESTUDIO */
+        .study-box { background: var(--card); border-radius: 25px; padding: 25px; border: 3px solid var(--primary); text-align: center; margin-bottom: 20px; }
+        .verb-es { font-size: 1.8rem; font-weight: 800; color: var(--primary); display: block; margin-bottom: 15px; text-transform: capitalize; }
+        .v-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 1.1rem; }
 
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        /* INPUTS Y BOTONES */
+        .input-box { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid #ddd; margin-bottom: 12px; font-size: 1.1rem; text-align: center; background: var(--card); color: var(--text); }
+        .btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-weight: bold; cursor: pointer; color: white; background: var(--primary); font-size: 1rem; box-shadow: 0 4px 10px var(--shadow); }
+        .btn:active { transform: scale(0.98); }
         
-        /* RESUMEN FINAL */
-        #summary-list { text-align: left; list-style: none; padding: 0; font-size: 0.9rem; max-height: 250px; overflow-y: auto; }
-        #summary-list li { padding: 8px; border-bottom: 1px solid #eee; word-break: break-all; }
+        .kitty { font-size: 50px; animation: bounce 2s infinite; display: inline-block; margin-bottom: 10px; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     </style>
 </head>
-<body id="body-bg">
+<body>
 
-<div class="app-container" id="app-box">
-    <audio id="bg-music" loop preload="auto">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" type="audio/mpeg">
-    </audio>
+<div class="app-container">
+    <audio id="music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" type="audio/mpeg"></audio>
 
-    <div class="header" id="main-header" style="display:none;">
-        <div onclick="showView('view-profile')" style="cursor:pointer; display:flex; align-items:center; gap:10px;">
-            <img id="header-pic" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="profile-pic-mini">
-            <span id="header-name" style="font-weight:bold; font-size:0.9rem;">Cargando...</span>
+    <div class="header" id="navbar" style="display:none;">
+        <div class="profile-group" onclick="showView('view-settings')">
+            <img id="nav-pic" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="profile-img">
+            <span id="nav-name" style="font-weight: bold;">Cargando...</span>
         </div>
-        <div id="header-xp" style="font-weight:bold;">⭐ 0 XP</div>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <span id="nav-xp">⭐ 0</span>
+            <span onclick="goHome()" style="cursor:pointer; font-size:1.6rem;">🏠</span>
+        </div>
     </div>
 
     <div id="view-login" class="view active">
-        <h1 style="text-align:center; color:var(--primary); margin-bottom:10px;">Verb Academy</h1>
-        <div class="tutor-section">
-            <div class="kitty-face">🐱</div>
-            <div class="speech-bubble">¡Hola! Soy tu tutor personal. ¿Cómo quieres que te llame?</div>
+        <h1 style="text-align:center; color:var(--primary); font-size: 2.2rem;">Verb Academy</h1>
+        <div class="card">
+            <div class="kitty">🐱</div>
+            <h2 style="margin:0">¡Hola!</h2>
+            <p>Aprende 90 verbos irregulares. Tu progreso se guardará en este dispositivo.</p>
+            <input type="text" id="user-in" class="input-box" placeholder="Escribe tu nombre">
+            <button class="btn" onclick="register()">Empezar Desafío</button>
         </div>
-        <input type="text" id="user-name" class="btn answer-input" placeholder="Escribe tu nombre aquí">
-        <button class="btn" onclick="initApp()">¡Empezar mi Aventura!</button>
     </div>
 
     <div id="view-menu" class="view">
-        <div class="tutor-section">
-            <div class="kitty-face">🐱</div>
-            <div class="speech-bubble" id="menu-msg">¡Qué alegría verte! Elige un modo para practicar hoy.</div>
+        <div class="card" style="background:var(--primary); color:white; padding:15px;">
+            <h3 style="margin:0">Selecciona un Nivel</h3>
         </div>
-        <button class="btn" style="background:var(--kids-green); color:#111 !important;" onclick="selectMode('kids')">🧸 Modo Niños</button>
-        <button class="btn" onclick="showView('view-themes')">⚡ Modo Adolescente</button>
-        <button class="btn" style="background:#ffa502" onclick="startKittyGame()">🎮 Juego: Alimenta al Gatito</button>
-        <button class="btn" style="background:#4b4b4b" onclick="showView('view-profile')">👤 Mi Perfil y Logros</button>
+        <div class="menu-grid">
+            <div class="card" onclick="openMap(0)"><i>🧸</i><br>Nivel 1<br><small>Esenciales</small></div>
+            <div class="card" onclick="openMap(1)"><i>⚡</i><br>Nivel 2<br><small>Intermedios</small></div>
+            <div class="card" onclick="openMap(2)"><i>🚀</i><br>Nivel 3<br><small>Avanzados</small></div>
+            <div class="card" onclick="showView('view-settings')"><i>⚙️</i><br>Ajustes</div>
+        </div>
+        <div class="card" id="resume-card" style="display:none; background:var(--success); color:white; cursor:pointer;" onclick="resume()">
+            <b>📍 Reanudar: <span id="last-verb-name"></span></b>
+        </div>
     </div>
 
-    <div id="view-profile" class="view">
-        <div class="profile-content">
-            <img id="profile-img-big" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
-            <input type="file" id="file-input" style="display:none" onchange="updatePhoto(event)">
-            <button class="btn" style="width:auto; padding:6px 12px; font-size:0.7rem; margin:0;" onclick="document.getElementById('file-input').click()">EDITAR FOTO</button>
-            <h2 id="profile-user-name" style="margin:10px 0;">Nombre</h2>
-            <div class="stats-box">
-                <div class="stat-card"><b>Puntos</b><br><span id="stat-xp">0</span></div>
-                <div class="stat-card"><b>Niveles</b><br><span id="stat-lvls">0</span></div>
+    <div id="view-map" class="view">
+        <h2 id="map-title" style="text-align:center; color:var(--primary); margin-bottom:5px;"></h2>
+        <p style="text-align:center; font-size:0.9rem; margin-top:0;">Completa cada verbo para ponerlo en verde</p>
+        <div id="sub-levels-container" class="sub-levels-grid"></div>
+        <button class="btn" style="margin-top:25px; background:#aaa;" onclick="goHome()">Volver al Menú</button>
+    </div>
+
+    <div id="view-learn" class="view">
+        <div id="study-ui">
+            <div class="study-box">
+                <span id="st-es" class="verb-es"></span>
+                <div class="v-line"><span>Presente (V1):</span><b id="st-v1"></b></div>
+                <div class="v-line"><span>Pasado (V2):</span><b id="st-v2"></b></div>
+                <div class="v-line"><span>Participio (V3):</span><b id="st-v3"></b></div>
             </div>
-            <h4 style="margin-bottom:5px;">🏆 Logros Obtenidos</h4>
-            <div id="achievements-list" style="color:#777; font-size:0.8rem;">Completa niveles para ganar medallas.</div>
+            <button class="btn" onclick="speak()" style="background:#00cec9; margin-bottom:12px;">Pronunciar 🔊</button>
+            <button class="btn" style="background:var(--success)" onclick="goExam()">¡Iniciar Evaluación! ✍️</button>
+            <button class="btn" style="background:#ccc; color:#333; margin-top:10px; padding:10px;" onclick="openMap(user.session.lvl)">Ver Mapa</button>
         </div>
-        <button class="btn" style="background:#eee; color:#333; box-shadow:none;" onclick="showView('view-menu')">Cerrar</button>
-    </div>
 
-    <div id="view-themes" class="view">
-        <h3>Elige tu Estilo</h3>
-        <button class="btn" style="background:#ff9ff3" onclick="selectMode('teens', 'hellokitty')">Hello Kitty 🎀</button>
-        <button class="btn" style="background:#2d3436; color:#f1c40f" onclick="selectMode('teens', 'batman')">Batman 🦇</button>
-        <button class="btn" style="background:#d63031" onclick="selectMode('teens', 'deadpool')">Deadpool ⚔️</button>
-    </div>
-
-    <div id="view-levels" class="view">
-        <h3>Selecciona Nivel</h3>
-        <button class="btn" onclick="startLevel(0)">Nivel 1: Esenciales (30)</button>
-        <button class="btn" onclick="startLevel(1)">Nivel 2: Cotidianos (30)</button>
-        <button class="btn" onclick="startLevel(2)">Nivel 3: Avanzados (30)</button>
-        <button class="btn" style="background:#eee; color:#333; box-shadow:none;" onclick="showView('view-menu')">Atrás</button>
-    </div>
-
-    <div id="view-study" class="view">
-        <div class="tutor-section" style="margin-top:0;">
-            <div class="kitty-face">🐱</div>
-            <div class="speech-bubble" id="st-kitty-msg">¡Aprende estos tiempos!</div>
+        <div id="exam-ui" style="display:none;">
+            <div class="card">
+                <h3 id="ex-es" style="color:var(--primary)"></h3>
+                <input type="text" id="in-v1" class="input-box" placeholder="Presente (V1)" autocomplete="off" autocapitalize="none">
+                <input type="text" id="in-v2" class="input-box" placeholder="Pasado (V2)" autocomplete="off" autocapitalize="none">
+                <input type="text" id="in-v3" class="input-box" placeholder="Participio (V3)" autocomplete="off" autocapitalize="none">
+                <button class="btn" style="background:var(--success)" onclick="check()">Verificar Respuestas ✅</button>
+            </div>
         </div>
-        <div class="study-card">
-            <span id="st-es" class="verb-main"></span>
-            <div class="verb-row"><span>Presente:</span> <b id="st-v1" style="color:var(--primary)"></b></div>
-            <div class="verb-row"><span>Pasado:</span> <b id="st-v2" style="color:var(--primary)"></b></div>
-            <div class="verb-row"><span>Participio:</span> <b id="st-v3" style="color:var(--primary)"></b></div>
+    </div>
+
+    <div id="view-settings" class="view">
+        <div class="card">
+            <h3>Configuración</h3>
+            <div style="display:flex; justify-content:space-between; margin:15px 0; align-items:center;">
+                <span>Modo Oscuro</span>
+                <input type="checkbox" id="dark-check" onchange="toggleDark()" style="width:20px; height:20px;">
+            </div>
+            <div style="display:flex; justify-content:space-between; margin:15px 0; align-items:center;">
+                <span>Música (Vol)</span>
+                <input type="range" id="vol-range" min="0" max="1" step="0.1" onchange="updateVol()">
+            </div>
+            <hr>
+            <button class="btn" style="background:var(--error); font-size:0.8rem;" onclick="reset()">Borrar todo el progreso</button>
         </div>
-        <button class="btn" style="background:#00d2d3" onclick="speakCurrent()">Escuchar Voz 🔊</button>
-        <button class="btn" onclick="nextStudy()">Siguiente</button>
-        <button class="btn" style="background:#eee; color:#333; box-shadow:none;" onclick="showView('view-menu')">🏠 Menú</button>
-    </div>
-
-    <div id="view-practice" class="view">
-        <h3 id="pr-es" style="text-align:center;"></h3>
-        <input type="text" id="in1" class="btn answer-input" placeholder="Presente">
-        <input type="text" id="in2" class="btn answer-input" placeholder="Pasado">
-        <input type="text" id="in3" class="btn answer-input" placeholder="Participio">
-        <button class="btn" style="background:var(--success)" onclick="checkAnswer()">Comprobar ✅</button>
-    </div>
-
-    <div id="view-results" class="view">
-        <h3>📊 Tu Progreso</h3>
-        <ul id="summary-list"></ul>
-        <button class="btn" onclick="showView('view-menu')">Finalizar</button>
+        <button class="btn" onclick="goHome()">Volver</button>
     </div>
 </div>
 
 <script>
-    // DATA COMPLETA (90 VERBOS VERIFICADOS)
-    const lvl1 = [
-        {es:"Ser / Estar", v1:"be", v2:"was", v3:"been"}, {es:"Convertirse", v1:"become", v2:"became", v3:"become"},
-        {es:"Empezar", v1:"begin", v2:"began", v3:"begun"}, {es:"Romper", v1:"break", v2:"broke", v3:"broken"},
-        {es:"Traer", v1:"bring", v2:"brought", v3:"brought"}, {es:"Construir", v1:"build", v2:"built", v3:"built"},
-        {es:"Comprar", v1:"buy", v2:"bought", v3:"bought"}, {es:"Elegir", v1:"choose", v2:"chose", v3:"chosen"},
-        {es:"Venir", v1:"come", v2:"came", v3:"come"}, {es:"Hacer (Do)", v1:"do", v2:"did", v3:"done"},
-        {es:"Beber", v1:"drink", v2:"drank", v3:"drunk"}, {es:"Conducir", v1:"drive", v2:"drove", v3:"driven"},
-        {es:"Comer", v1:"eat", v2:"ate", v3:"eaten"}, {es:"Caer", v1:"fall", v2:"fell", v3:"fallen"},
-        {es:"Sentir", v1:"feel", v2:"felt", v3:"felt"}, {es:"Encontrar", v1:"find", v2:"found", v3:"found"},
-        {es:"Obtener", v1:"get", v2:"got", v3:"gotten"}, {es:"Dar", v1:"give", v2:"gave", v3:"given"},
-        {es:"Ir", v1:"go", v2:"went", v3:"gone"}, {es:"Tener", v1:"have", v2:"had", v3:"had"},
-        {es:"Saber", v1:"know", v2:"knew", v3:"known"}, {es:"Hacer (Make)", v1:"make", v2:"made", v3:"made"},
-        {es:"Leer", v1:"read", v2:"read", v3:"read"}, {es:"Decir", v1:"say", v2:"said", v3:"said"},
-        {es:"Ver", v1:"see", v2:"saw", v3:"seen"}, {es:"Hablar", v1:"speak", v2:"spoke", v3:"spoken"},
-        {es:"Tomar", v1:"take", v2:"took", v3:"taken"}, {es:"Contar", v1:"tell", v2:"told", v3:"told"},
-        {es:"Pensar", v1:"think", v2:"thought", v3:"thought"}, {es:"Escribir", v1:"write", v2:"wrote", v3:"written"}
+    // ==========================================
+    // BASE DE DATOS COMPLETA (90 VERBOS)
+    // ==========================================
+    const levels = [
+        // NIVEL 1: LOS 30 ESENCIALES
+        [
+            {es:"Ser / Estar", v1:"be", v2:"was", v3:"been"},
+            {es:"Convertirse", v1:"become", v2:"became", v3:"become"},
+            {es:"Empezar", v1:"begin", v2:"began", v3:"begun"},
+            {es:"Romper", v1:"break", v2:"broke", v3:"broken"},
+            {es:"Traer", v1:"bring", v2:"brought", v3:"brought"},
+            {es:"Construir", v1:"build", v2:"built", v3:"built"},
+            {es:"Comprar", v1:"buy", v2:"bought", v3:"bought"},
+            {es:"Elegir", v1:"choose", v2:"chose", v3:"chosen"},
+            {es:"Venir", v1:"come", v2:"came", v3:"come"},
+            {es:"Hacer (Acción)", v1:"do", v2:"did", v3:"done"},
+            {es:"Beber", v1:"drink", v2:"drank", v3:"drunk"},
+            {es:"Conducir", v1:"drive", v2:"drove", v3:"driven"},
+            {es:"Comer", v1:"eat", v2:"ate", v3:"eaten"},
+            {es:"Caer", v1:"fall", v2:"fell", v3:"fallen"},
+            {es:"Sentir", v1:"feel", v2:"felt", v3:"felt"},
+            {es:"Encontrar", v1:"find", v2:"found", v3:"found"},
+            {es:"Obtener", v1:"get", v2:"got", v3:"gotten"},
+            {es:"Dar", v1:"give", v2:"gave", v3:"given"},
+            {es:"Ir", v1:"go", v2:"went", v3:"gone"},
+            {es:"Tener", v1:"have", v2:"had", v3:"had"},
+            {es:"Saber / Conocer", v1:"know", v2:"knew", v3:"known"},
+            {es:"Hacer (Fabricar)", v1:"make", v2:"made", v3:"made"},
+            {es:"Leer", v1:"read", v2:"read", v3:"read"},
+            {es:"Decir", v1:"say", v2:"said", v3:"said"},
+            {es:"Ver", v1:"see", v2:"saw", v3:"seen"},
+            {es:"Hablar", v1:"speak", v2:"spoke", v3:"spoken"},
+            {es:"Tomar / Llevar", v1:"take", v2:"took", v3:"taken"},
+            {es:"Contar / Decir", v1:"tell", v2:"told", v3:"told"},
+            {es:"Pensar", v1:"think", v2:"thought", v3:"thought"},
+            {es:"Escribir", v1:"write", v2:"wrote", v3:"written"}
+        ],
+        // NIVEL 2: LOS 30 INTERMEDIOS
+        [
+            {es:"Surgir", v1:"arise", v2:"arose", v3:"arisen"},
+            {es:"Morder", v1:"bite", v2:"bit", v3:"bitten"},
+            {es:"Soplar", v1:"blow", v2:"blew", v3:"blown"},
+            {es:"Atrapar", v1:"catch", v2:"caught", v3:"caught"},
+            {es:"Cortar", v1:"cut", v2:"cut", v3:"cut"},
+            {es:"Dibujar", v1:"draw", v2:"drew", v3:"drawn"},
+            {es:"Soñar", v1:"dream", v2:"dreamt", v3:"dreamt"},
+            {es:"Alimentar", v1:"feed", v2:"fed", v3:"fed"},
+            {es:"Pelear", v1:"fight", v2:"fought", v3:"fought"},
+            {es:"Volar", v1:"fly", v2:"flew", v3:"flown"},
+            {es:"Olvidar", v1:"forget", v2:"forgot", v3:"forgotten"},
+            {es:"Perdonar", v1:"forgive", v2:"forgave", v3:"forgiven"},
+            {es:"Congelar", v1:"freeze", v2:"froze", v3:"frozen"},
+            {es:"Crecer", v1:"grow", v2:"grew", v3:"grown"},
+            {es:"Oír", v1:"hear", v2:"heard", v3:"heard"},
+            {es:"Esconder", v1:"hide", v2:"hid", v3:"hidden"},
+            {es:"Sostener", v1:"hold", v2:"held", v3:"held"},
+            {es:"Guardar", v1:"keep", v2:"kept", v3:"kept"},
+            {es:"Guiar", v1:"lead", v2:"led", v3:"led"},
+            {es:"Dejar / Salir", v1:"leave", v2:"left", v3:"left"},
+            {es:"Prestar", v1:"lend", v2:"lent", v3:"lent"},
+            {es:"Perder", v1:"lose", v2:"lost", v3:"lost"},
+            {es:"Conocer (persona)", v1:"meet", v2:"met", v3:"met"},
+            {es:"Pagar", v1:"pay", v2:"paid", v3:"paid"},
+            {es:"Correr", v1:"run", v2:"ran", v3:"run"},
+            {es:"Enviar", v1:"send", v2:"sent", v3:"sent"},
+            {es:"Cantar", v1:"sing", v2:"sang", v3:"sung"},
+            {es:"Sentarse", v1:"sit", v2:"sat", v3:"sat"},
+            {es:"Dormir", v1:"sleep", v2:"slept", v3:"slept"},
+            {es:"Gastar", v1:"spend", v2:"spent", v3:"spent"}
+        ],
+        // NIVEL 3: LOS 30 AVANZADOS
+        [
+            {es:"Doblar", v1:"bend", v2:"bent", v3:"bent"},
+            {es:"Sangrar", v1:"bleed", v2:"bled", v3:"bled"},
+            {es:"Criar", v1:"breed", v2:"bred", v3:"bred"},
+            {es:"Aferrarse", v1:"cling", v2:"clung", v3:"clung"},
+            {es:"Tratar / Negociar", v1:"deal", v2:"dealt", v3:"dealt"},
+            {es:"Cavar", v1:"dig", v2:"dug", v3:"dug"},
+            {es:"Huir", v1:"flee", v2:"fled", v3:"fled"},
+            {es:"Arrojar", v1:"fling", v2:"flung", v3:"flung"},
+            {es:"Predecir", v1:"forecast", v2:"forecast", v3:"forecast"},
+            {es:"Abandonar", v1:"forsake", v2:"forsook", v3:"forsaken"},
+            {es:"Arrodillarse", v1:"kneel", v2:"knelt", v3:"knelt"},
+            {es:"Saltar", v1:"leap", v2:"leapt", v3:"leapt"},
+            {es:"Apoyarse", v1:"lean", v2:"leant", v3:"leant"},
+            {es:"Equivocarse", v1:"mistake", v2:"mistook", v3:"mistaken"},
+            {es:"Superar", v1:"overcome", v2:"overcame", v3:"overcome"},
+            {es:"Buscar", v1:"seek", v2:"sought", v3:"sought"},
+            {es:"Sacudir", v1:"shake", v2:"shook", v3:"shaken"},
+            {es:"Mudar / Soltar", v1:"shed", v2:"shed", v3:"shed"},
+            {es:"Encoger", v1:"shrink", v2:"shrank", v3:"shrunk"},
+            {es:"Deslizarse", v1:"slide", v2:"slid", v3:"slid"},
+            {es:"Escupir", v1:"spit", v2:"spat", v3:"spat"},
+            {es:"Dividir", v1:"split", v2:"split", v3:"split"},
+            {es:"Extender", v1:"spread", v2:"spread", v3:"spread"},
+            {es:"Brotar", v1:"spring", v2:"sprang", v3:"sprung"},
+            {es:"Pegar", v1:"stick", v2:"stuck", v3:"stuck"},
+            {es:"Picar", v1:"sting", v2:"stung", v3:"stung"},
+            {es:"Caminar a zancadas", v1:"stride", v2:"strode", v3:"stridden"},
+            {es:"Jurar", v1:"swear", v2:"swore", v3:"sworn"},
+            {es:"Barrer", v1:"sweep", v2:"swept", v3:"swept"},
+            {es:"Experimentar / Sufrir", v1:"undergo", v2:"underwent", v3:"undergone"}
+        ]
     ];
 
-    const lvl2 = [
-        {es:"Surgir", v1:"arise", v2:"arose", v3:"arisen"}, {es:"Morder", v1:"bite", v2:"bit", v3:"bitten"},
-        {es:"Soplar", v1:"blow", v2:"blew", v3:"blown"}, {es:"Atrapar", v1:"catch", v2:"caught", v3:"caught"},
-        {es:"Cortar", v1:"cut", v2:"cut", v3:"cut"}, {es:"Dibujar", v1:"draw", v2:"drew", v3:"drawn"},
-        {es:"Soñar", v1:"dream", v2:"dreamt", v3:"dreamt"}, {es:"Alimentar", v1:"feed", v2:"fed", v3:"fed"},
-        {es:"Pelear", v1:"fight", v2:"fought", v3:"fought"}, {es:"Volar", v1:"fly", v2:"flew", v3:"flown"},
-        {es:"Olvidar", v1:"forget", v2:"forgot", v3:"forgotten"}, {es:"Perdonar", v1:"forgive", v2:"forgave", v3:"forgiven"},
-        {es:"Congelar", v1:"freeze", v2:"froze", v3:"frozen"}, {es:"Crecer", v1:"grow", v2:"grew", v3:"grown"},
-        {es:"Oír", v1:"hear", v2:"heard", v3:"heard"}, {es:"Esconder", v1:"hide", v2:"hid", v3:"hidden"},
-        {es:"Sostener", v1:"hold", v2:"held", v3:"held"}, {es:"Mantener", v1:"keep", v2:"kept", v3:"kept"},
-        {es:"Guiar", v1:"lead", v2:"led", v3:"led"}, {es:"Dejar", v1:"leave", v2:"left", v3:"left"},
-        {es:"Prestar", v1:"lend", v2:"lent", v3:"lent"}, {es:"Perder", v1:"lose", v2:"lost", v3:"lost"},
-        {es:"Meet", v1:"meet", v2:"met", v3:"met"}, {es:"Pagar", v1:"pay", v2:"paid", v3:"paid"},
-        {es:"Correr", v1:"run", v2:"ran", v3:"run"}, {es:"Enviar", v1:"send", v2:"sent", v3:"sent"},
-        {es:"Cantar", v1:"sing", v2:"sang", v3:"sung"}, {es:"Sentarse", v1:"sit", v2:"sat", v3:"sat"},
-        {es:"Dormir", v1:"sleep", v2:"slept", v3:"slept"}, {es:"Gastar", v1:"spend", v2:"spent", v3:"spent"}
-    ];
+    // ==========================================
+    // LÓGICA DE LA APLICACIÓN
+    // ==========================================
 
-    const lvl3 = [
-        {es:"Doblar", v1:"bend", v2:"bent", v3:"bent"}, {es:"Sangrar", v1:"bleed", v2:"bled", v3:"bled"},
-        {es:"Criar", v1:"breed", v2:"bred", v3:"bred"}, {es:"Aferrarse", v1:"cling", v2:"clung", v3:"clung"},
-        {es:"Negociar", v1:"deal", v2:"dealt", v3:"dealt"}, {es:"Cavar", v1:"dig", v2:"dug", v3:"dug"},
-        {es:"Huir", v1:"flee", v2:"fled", v3:"fled"}, {es:"Arrojar", v1:"fling", v2:"flung", v3:"flung"},
-        {es:"Predecir", v1:"forecast", v2:"forecast", v3:"forecast"}, {es:"Abandonar", v1:"forsake", v2:"forsook", v3:"forsaken"},
-        {es:"Arrodillarse", v1:"kneel", v2:"knelt", v3:"knelt"}, {es:"Saltar (Leap)", v1:"leap", v2:"leapt", v3:"leapt"},
-        {es:"Apoyarse", v1:"lean", v2:"leant", v3:"leant"}, {es:"Equivocarse", v1:"mistake", v2:"mistook", v3:"mistaken"},
-        {es:"Superar", v1:"overcome", v2:"overcame", v3:"overcome"}, {es:"Buscar", v1:"seek", v2:"sought", v3:"sought"},
-        {es:"Sacudir", v1:"shake", v2:"shook", v3:"shaken"}, {es:"Mudar", v1:"shed", v2:"shed", v3:"shed"},
-        {es:"Encoger", v1:"shrink", v2:"shrank", v3:"shrunk"}, {es:"Deslizarse", v1:"slide", v2:"slid", v3:"slid"},
-        {es:"Escupir", v1:"spit", v2:"spat", v3:"spat"}, {es:"Dividir", v1:"split", v2:"split", v3:"split"},
-        {es:"Extender", v1:"spread", v2:"spread", v3:"spread"}, {es:"Brotar", v1:"spring", v2:"sprang", v3:"sprung"},
-        {es:"Pegar", v1:"stick", v2:"stuck", v3:"stuck"}, {es:"Picar", v1:"sting", v2:"stung", v3:"stung"},
-        {es:"Caminar", v1:"stride", v2:"strode", v3:"stridden"}, {es:"Jurar", v1:"swear", v2:"swore", v3:"sworn"},
-        {es:"Barrer", v1:"sweep", v2:"swept", v3:"swept"}, {es:"Experimentar", v1:"undergo", v2:"underwent", v3:"undergone"}
-    ];
-
-    const data = [lvl1, lvl2, lvl3];
-    let user = { name: "", xp: 0, lvls: 0, photo: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" };
-    let curLvl = 0, curIdx = 0, results = [], curMode = "", isGameMode = false;
-    const synth = window.speechSynthesis;
-
-    // INICIAR
-    window.onload = () => {
-        const saved = localStorage.getItem('verbAppV6');
-        if(saved) { user = JSON.parse(saved); showView('view-menu'); }
+    let user = { 
+        name: "", 
+        xp: 0, 
+        dark: false, 
+        vol: 0.2, 
+        photo: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+        session: { lvl: 0, vIdx: 0, active: false },
+        completed: [[],[],[]] // Aquí guardamos qué verbos de cada nivel están en verde
     };
 
+    const music = document.getElementById('music');
+
+    // --- Persistencia ---
+    function save() {
+        localStorage.setItem('VerbMaster_FinalStorage', JSON.stringify(user));
+    }
+
+    function load() {
+        const data = localStorage.getItem('VerbMaster_FinalStorage');
+        if(data) {
+            user = JSON.parse(data);
+            document.getElementById('navbar').style.display = 'flex';
+            applySettings();
+            showView('view-menu');
+        }
+    }
+
+    function applySettings() {
+        document.body.classList.toggle('dark-mode', user.dark);
+        document.getElementById('dark-check').checked = user.dark;
+        document.getElementById('vol-range').value = user.vol;
+        music.volume = user.vol;
+        updateUI();
+    }
+
+    // --- Navegación ---
     function showView(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        updateHeader();
+        window.scrollTo(0,0);
+        updateUI();
     }
 
-    function initApp() {
-        const n = document.getElementById('user-name').value;
-        if(!n) return alert("¡Dime tu nombre!");
+    function goHome() { showView('view-menu'); }
+
+    function updateUI() {
+        document.getElementById('nav-name').innerText = user.name || "Usuario";
+        document.getElementById('nav-pic').src = user.photo;
+        document.getElementById('nav-xp').innerText = `⭐ ${user.xp}`;
+        
+        if(user.session.active) {
+            document.getElementById('resume-card').style.display = 'block';
+            document.getElementById('last-verb-name').innerText = levels[user.session.lvl][user.session.vIdx].es;
+        } else {
+            document.getElementById('resume-card').style.display = 'none';
+        }
+    }
+
+    // --- Acciones de Usuario ---
+    function register() {
+        const n = document.getElementById('user-in').value.trim();
+        if(!n) return alert("Por favor, ingresa tu nombre");
         user.name = n;
+        document.getElementById('navbar').style.display = 'flex';
         save();
-        document.getElementById('main-header').style.display = 'flex';
-        document.getElementById('bg-music').play();
+        music.play().catch(()=>{}); 
         showView('view-menu');
     }
 
-    function updateHeader() {
-        document.getElementById('header-name').innerText = user.name;
-        document.getElementById('header-xp').innerText = `⭐ ${user.xp}`;
-        document.getElementById('header-pic').src = user.photo;
-        document.getElementById('profile-img-big').src = user.photo;
-        document.getElementById('profile-user-name').innerText = user.name;
-        document.getElementById('stat-xp').innerText = user.xp;
-        document.getElementById('stat-lvls').innerText = user.lvls;
+    // Abrir el Mapa de Sub-niveles (Los Cuadritos)
+    function openMap(lIdx) {
+        user.session.lvl = lIdx;
+        const container = document.getElementById('sub-levels-container');
+        container.innerHTML = "";
+        document.getElementById('map-title').innerText = "Nivel " + (lIdx + 1);
+        
+        // Creamos los 30 nodos (cuadritos)
+        for(let i = 0; i < 30; i++) {
+            const node = document.createElement('div');
+            node.className = 'sub-lvl-node';
+            node.innerText = i + 1;
+            
+            // Si el verbo ya fue completado, pintar de verde
+            if(user.completed[lIdx].includes(i)) {
+                node.classList.add('completed');
+            }
+            // Si es el verbo en el que se quedó, resaltar
+            if(user.session.vIdx === i && user.session.lvl === lIdx) {
+                node.classList.add('current');
+            }
+
+            node.onclick = () => {
+                user.session.vIdx = i;
+                user.session.active = true;
+                resume();
+            };
+            container.appendChild(node);
+        }
+        showView('view-map');
     }
 
-    function selectMode(m, t = '') {
-        curMode = m; isGameMode = false;
-        document.getElementById('app-box').className = "app-container " + (m === 'kids' ? 'kids-theme' : '');
-        if(t) document.getElementById('body-bg').className = `theme-${t}`;
-        showView('view-levels');
-    }
-
-    function startLevel(l) {
-        curLvl = l; curIdx = 0; results = [];
-        showView('view-study'); updateStudy();
-    }
-
-    function updateStudy() {
-        const v = data[curLvl][curIdx];
+    function resume() {
+        showView('view-learn');
+        const v = levels[user.session.lvl][user.session.vIdx];
         document.getElementById('st-es').innerText = v.es;
         document.getElementById('st-v1').innerText = v.v1;
         document.getElementById('st-v2').innerText = v.v2;
         document.getElementById('st-v3').innerText = v.v3;
-        speakCurrent();
+        document.getElementById('study-ui').style.display = 'block';
+        document.getElementById('exam-ui').style.display = 'none';
+        save();
     }
 
-    function speakCurrent() {
-        synth.cancel(); // Detiene audios en cola para fluidez
-        const v = data[curLvl][curIdx];
-        const m = new SpeechSynthesisUtterance(`${v.v1}, ${v.v2}, ${v.v3}`);
-        m.lang = 'en-US'; m.rate = 0.85;
-        synth.speak(m);
+    function goExam() {
+        document.getElementById('study-ui').style.display = 'none';
+        document.getElementById('exam-ui').style.display = 'block';
+        document.getElementById('ex-es').innerText = `¿Cómo se escribe "${levels[user.session.lvl][user.session.vIdx].es}"?`;
+        document.getElementById('in-v1').value = "";
+        document.getElementById('in-v2').value = "";
+        document.getElementById('in-v3').value = "";
     }
 
-    function nextStudy() {
-        if(curIdx < data[curLvl].length - 1) { curIdx++; updateStudy(); }
-        else { curIdx = 0; showView('view-practice'); loadPractice(); }
+    function check() {
+        const v = levels[user.session.lvl][user.session.vIdx];
+        const r1 = document.getElementById('in-v1').value.trim().toLowerCase();
+        const r2 = document.getElementById('in-v2').value.trim().toLowerCase();
+        const r3 = document.getElementById('in-v3').value.trim().toLowerCase();
+
+        if(r1 === v.v1 && r2 === v.v2 && r3 === v.v3) {
+            // ÉXITO
+            user.xp += 15;
+            // Guardar en la lista de completados si no está
+            if(!user.completed[user.session.lvl].includes(user.session.vIdx)) {
+                user.completed[user.session.lvl].push(user.session.vIdx);
+            }
+            alert("¡Excelente! Has dominado este verbo.");
+            openMap(user.session.lvl); // Volver al mapa para ver el cuadrito verde
+        } else {
+            // ERROR
+            alert(`Oops. Casi. Las respuestas correctas eran: ${v.v1}, ${v.v2}, ${v.v3}. ¡Vuelve a estudiarlo!`);
+            resume();
+        }
+        save();
     }
 
-    function loadPractice() {
-        const v = data[curLvl][curIdx];
-        document.getElementById('pr-es').innerText = `¿Cómo escribes "${v.es}"?`;
-        document.querySelectorAll('#view-practice input').forEach(i => i.value = "");
+    function speak() {
+        window.speechSynthesis.cancel();
+        const v = levels[user.session.lvl][user.session.vIdx];
+        const msg = new SpeechSynthesisUtterance(`${v.v1}, ${v.v2}, ${v.v3}`);
+        msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
     }
 
-    function checkAnswer() {
-        const v = data[curLvl][curIdx];
-        const r = [document.getElementById('in1').value.trim().toLowerCase(), 
-                   document.getElementById('in2').value.trim().toLowerCase(), 
-                   document.getElementById('in3').value.trim().toLowerCase()];
-        
-        const isOk = (r[0] === v.v1 && r[1] === v.v2 && r[2] === v.v3);
-        results.push({v: v.es, res: isOk ? '✅ Bien' : `❌ Era: ${v.v1}, ${v.v2}, ${v.v3}`});
-        if(isOk) user.xp += 10;
-
-        curIdx++;
-        if(curIdx < data[curLvl].length) loadPractice();
-        else { user.lvls++; save(); showSummary(); }
+    // --- Ajustes ---
+    function toggleDark() {
+        user.dark = document.getElementById('dark-check').checked;
+        applySettings();
+        save();
     }
 
-    function showSummary() {
-        let h = "";
-        results.forEach(r => h += `<li><b>${r.v}:</b> ${r.res}</li>`);
-        document.getElementById('summary-list').innerHTML = h;
-        showView('view-results');
+    function updateVol() {
+        user.vol = document.getElementById('vol-range').value;
+        music.volume = user.vol;
+        save();
     }
 
-    function updatePhoto(e) {
-        const f = e.target.files[0];
-        const r = new FileReader();
-        r.onload = () => { user.photo = r.result; save(); updateHeader(); };
-        r.readAsDataURL(f);
+    function reset() {
+        if(confirm("¿Estás seguro? Se borrarán todos tus puntos y cuadritos verdes.")) {
+            localStorage.clear();
+            location.reload();
+        }
     }
 
-    function save() { localStorage.setItem('verbAppV6', JSON.stringify(user)); }
+    // CARGAR AL INICIAR
+    window.onload = load;
 
-    function startKittyGame() {
-        isGameMode = true; curLvl = 0; curIdx = 0; results = [];
-        showView('view-practice'); loadPractice();
-    }
 </script>
 </body>
 </html>
