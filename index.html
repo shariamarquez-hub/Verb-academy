@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verb Academy: Kitty Edition</title>
+    <title>Verb Academy: Kitty Tutor Edition</title>
     <style>
         :root {
             --primary: #6c5ce7; --success: #1dd1a1; --bg: #f0f4f8;
@@ -16,40 +16,33 @@
         .theme-batman { --primary: #2d3436; --bg: #1e272e; color: #f1c40f; }
         .theme-deadpool { --primary: #d63031; --bg: #2d3436; color: white; }
 
-        body { font-family: sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; transition: 0.5s; overflow-x: hidden; }
-        .app { background: white; width: 95%; max-width: 500px; padding: 25px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; position: relative; z-index: 10; }
+        body { font-family: sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; transition: 0.5s; overflow: hidden; }
+        .app { background: white; width: 95%; max-width: 550px; padding: 25px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; position: relative; }
         
-        /* ASISTENTE GATITO */
-        .kitty-container { position: fixed; bottom: 10px; right: 10px; width: 120px; text-align: center; z-index: 100; pointer-events: none; transition: 0.3s; display: none; }
-        .kitty-body { font-size: 50px; position: relative; animation: bounce 2s infinite; }
-        .kitty-hat { position: absolute; top: -15px; left: 15px; font-size: 25px; }
-        .kitty-bubble { background: white; border-radius: 15px; padding: 8px; font-size: 12px; border: 2px solid var(--pink-kitty); margin-bottom: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
-        .heart-pop { position: absolute; top: -30px; left: 40px; color: red; font-size: 20px; opacity: 0; transition: 0.5s; }
-        .heart-active { opacity: 1; transform: translateY(-20px); }
+        /* DISEÑO INTEGRADO DEL GATITO TUTOR */
+        .study-area { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 15px 0; }
+        @media (min-width: 480px) { .study-area { flex-direction: row; justify-content: center; } } /* En PC, uno al lado del otro */
+
+        .kitty-tutor { font-size: 80px; text-align: center; animation: bounce 2s infinite; position: relative; flex-shrink: 0; }
+        .kitty-hat-pro { position: absolute; top: -20px; left: 25px; font-size: 35px; }
+        .kitty-speech { background: white; border-radius: 15px; padding: 10px; font-size: 14px; border: 2px solid var(--pink-kitty); box-shadow: 2px 2px 5px rgba(0,0,0,0.1); max-width: 150px; color: #333; margin-bottom: 10px; }
 
         /* VISTAS */
         .view { display: none; }
         .view.active { display: block; animation: zoomIn 0.3s; }
-        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         .btn { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; color: white; background: var(--primary); }
+        .btn-home { background: #dfe6e9; color: #636e72; padding: 8px; font-size: 0.9rem; margin-top: 20px; }
         input { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 10px; text-align: center; box-sizing: border-box; }
         
-        .slider-box { background: #eee; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 14px; color: #333; }
-        #summary-list { text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px; }
+        .study-note { background: #fdfdff; border: 2px dashed var(--primary); border-radius: 15px; padding: 15px; flex-grow: 1; width: 100%; }
+        .verb-row { display: flex; justify-content: space-around; margin: 10px 0; font-weight: bold; font-size: 1.1rem; }
+        .slider-box { background: #f1f2f6; padding: 10px; border-radius: 10px; margin: 10px 0; font-size: 0.8rem; color: #333; }
     </style>
 </head>
 <body id="body-bg">
-
-<div id="kitty-asist" class="kitty-container">
-    <div id="kitty-bubble" class="kitty-bubble">¡Hola!</div>
-    <div class="kitty-body">
-        <span class="kitty-hat">👒</span>
-        🐱
-        <span id="heart" class="heart-pop">❤️</span>
-    </div>
-</div>
 
 <div class="app" id="app-box">
     <audio id="bg-music" loop>
@@ -57,74 +50,109 @@
     </audio>
 
     <div id="view-login" class="view">
-        <h1>🎒 Verb Academy</h1>
+        <h1>🌟 Verb Academy</h1>
         <input type="text" id="user-name" placeholder="Tu nombre">
-        <button class="btn" onclick="saveUser()">Comenzar</button>
+        <button class="btn" onclick="saveUser()">Entrar al Curso</button>
     </div>
 
     <div id="view-menu" class="view">
         <h2 id="welcome-msg"></h2>
-        <button class="btn" style="background:var(--pink-kitty)" onclick="selectMode('kids')">🧸 Modo Niños</button>
-        <button class="btn" style="background:var(--primary)" onclick="showView('view-themes')">⚡ Modo Adolescente</button>
-        <button class="btn" style="background:#ffa502" onclick="startKittyGame()">🎮 Juego: Alimenta al Gatito</button>
+        <p>El gatito tutor te guiará hoy:</p>
+        <button class="btn" style="background:var(--pink-kitty)" onclick="selectMode('kids')">🧸 Modo Niños (Diversión)</button>
+        <button class="btn" style="background:var(--primary)" onclick="showView('view-themes')">⚡ Modo Pro (Reto)</button>
+        <button class="btn" style="background:#ffa502" onclick="startKittyGame()">🎮 Juego: Alimenta al Tutor</button>
     </div>
 
     <div id="view-themes" class="view">
-        <h2>Temas:</h2>
+        <h2>Temas Pro:</h2>
         <button class="btn" style="background:#ff9ff3" onclick="selectMode('teens', 'hellokitty')">Hello Kitty 🎀</button>
         <button class="btn" style="background:#2d3436; color:#f1c40f" onclick="selectMode('teens', 'batman')">Batman 🦇</button>
         <button class="btn" style="background:#d63031" onclick="selectMode('teens', 'deadpool')">Deadpool ⚔️</button>
     </div>
 
     <div id="view-levels" class="view">
-        <h2>Niveles</h2>
-        <button class="btn" onclick="startLevel(0)">Nivel 1</button>
-        <button class="btn" onclick="startLevel(1)">Nivel 2</button>
-        <button class="btn" onclick="startLevel(2)">Nivel 3</button>
+        <h2>Niveles de Estudio</h2>
+        <button class="btn" onclick="startLevel(0)">Nivel 1: 🌱</button>
+        <button class="btn" onclick="startLevel(1)">Nivel 2: 🏠</button>
+        <button class="btn" onclick="startLevel(2)">Nivel 3: 🚀</button>
+        <button class="btn btn-home" onclick="showView('view-menu')">🏠 Menú Principal</button>
     </div>
 
     <div id="view-study" class="view">
-        <h2 id="st-es"></h2>
+        <div class="study-area">
+            <div class="kitty-tutor">
+                <div class="kitty-speech" id="st-kitty-msg">¡Mírame!</div>
+                <span class="kitty-hat-pro">👒</span>
+                🐱
+            </div>
+            
+            <div class="study-note">
+                <h2 id="st-es" style="margin:5px 0;"></h2>
+                <div class="verb-row"><span>P:</span> <span id="st-v1" style="color:var(--primary)"></span></div>
+                <div class="verb-row"><span>S:</span> <span id="st-v2" style="color:var(--primary)"></span></div>
+                <div class="verb-row"><span>Pt:</span> <span id="st-v3" style="color:var(--primary)"></span></div>
+            </div>
+        </div>
+        
         <div class="slider-box">
-            Velocidad de voz: <input type="range" id="voice-speed" min="0.5" max="1.5" step="0.1" value="1">
+            Voz: <input type="range" id="voice-speed" min="0.5" max="1.1" step="0.1" value="0.9">
         </div>
         <button class="btn" style="background:#00d2d3" onclick="speakCurrent()">Escuchar 🔊</button>
-        <button class="btn" onclick="nextStudy()">Siguiente</button>
+        <button class="btn" onclick="nextStudy()">Siguiente Verbo</button>
+        <button class="btn btn-home" onclick="showView('view-menu')">🏠 Menú Principal</button>
     </div>
 
     <div id="view-practice" class="view">
-        <h2 id="pr-es"></h2>
-        <input type="text" id="in1" placeholder="Presente">
-        <input type="text" id="in2" placeholder="Pasado">
-        <input type="text" id="in3" placeholder="Participio">
-        <button class="btn" style="background:var(--success)" onclick="checkAnswer()">Comprobar</button>
+        <div class="study-area">
+            <div class="kitty-tutor">
+                <div class="kitty-speech" id="pr-kitty-msg">¿Lo sabes?</div>
+                <span class="kitty-hat-pro">👒</span>
+                🐱
+                <span id="heart" style="position:absolute; top:-40px; left:50px; opacity:0; color:red; transition:0.5s;">❤️</span>
+            </div>
+            
+            <div class="study-note" style="border: 2px solid var(--success)">
+                <h2 id="pr-es"></h2>
+                <input type="text" id="in1" placeholder="Infinitive (P)">
+                <input type="text" id="in2" placeholder="Past Simple (S)">
+                <input type="text" id="in3" placeholder="Past Participle (Pt)">
+            </div>
+        </div>
+        
+        <button class="btn" style="background:var(--success)" onclick="checkAnswer()">Comprobar ✅</button>
+        <button class="btn btn-home" onclick="showView('view-menu')">🏠 Menú Principal</button>
     </div>
 
     <div id="view-results" class="view">
-        <h2>📊 Resumen de Nivel</h2>
-        <div id="summary-list"></div>
-        <button class="btn" onclick="showView('view-menu')">Volver al Menú</button>
+        <h2>📊 Resumen del Tutor</h2>
+        <div id="summary-list" style="text-align:left; padding:10px;"></div>
+        <button class="btn" onclick="showView('view-menu')">Volver al Inicio</button>
     </div>
 </div>
 
 <script>
     const database = {
         kids: [
-            [{es:"Correr", v1:"run", v2:"ran", v3:"run"}, {es:"Saltar", v1:"jump", v2:"jumped", v3:"jumped"}],
-            [{es:"Comer", v1:"eat", v2:"ate", v3:"eaten"}]
+            [{es:"Correr 🏃", v1:"run", v2:"ran", v3:"run"}, {es:"Saltar 🦘", v1:"jump", v2:"jumped", v3:"jumped"}],
+            [{es:"Comer 🍎", v1:"eat", v2:"ate", v3:"eaten"}]
         ],
         teens: [
-            [{es:"Hacer", v1:"do", v2:"did", v3:"done"}, {es:"Tener", v1:"have", v2:"had", v3:"had"}],
-            [{es:"Comprar", v1:"buy", v2:"bought", v3:"bought"}]
+            [{es:"Hacer ⚙️", v1:"do", v2:"did", v3:"done"}, {es:"Tener 🤲", v1:"have", v2:"had", v3:"had"}],
+            [{es:"Comprar 🛒", v1:"buy", v2:"bought", v3:"bought"}]
         ]
     };
 
-    let user = { name: "", xp: 0 };
-    let curMode = "", curLvl = 0, curIdx = 0, results = [];
-    let isGameMode = false;
+    const kittyMsgs = {
+        study: ["¡Mira el cuadro! 👀", "¡Escucha bien! 🔊", "¡Repítelo! 💬"],
+        practiceKids: ["¿Sabes cuál es? 🤔", "¡Vamos tú puedes! ⭐", "¡Casi lo tienes! 🌟"],
+        practiceTeens: ["¡Enfócate! 🧠", "¡La memoria es clave! 💡", "¡Nivel Pro! ⚡"]
+    };
+
+    let user = { name: "" };
+    let curMode = "", curLvl = 0, curIdx = 0, results = [], isGameMode = false;
 
     window.onload = () => {
-        const saved = localStorage.getItem('verbUserV2');
+        const saved = localStorage.getItem('verbUserTutorV4');
         if(saved) { user = JSON.parse(saved); showMenu(); } 
         else { showView('view-login'); }
     };
@@ -132,30 +160,26 @@
     function showView(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        // Gatito solo en niños o juego
-        document.getElementById('kitty-asist').style.display = (curMode === 'kids' || isGameMode) ? 'block' : 'none';
+        
+        const music = document.getElementById('bg-music');
+        music.volume = 0.15; // Música suave
+        music.play().catch(() => {});
     }
 
     function saveUser() {
         user.name = document.getElementById('user-name').value || "Estudiante";
-        localStorage.setItem('verbUserV2', JSON.stringify(user));
+        localStorage.setItem('verbUserTutorV4', JSON.stringify(user));
         showMenu();
     }
 
     function showMenu() {
         document.getElementById('welcome-msg').innerText = `¡Hola, ${user.name}!`;
         showView('view-menu');
-        document.getElementById('bg-music').play().catch(e => console.log("Click para música"));
     }
 
     function selectMode(mode, theme = '') {
         curMode = mode; isGameMode = false;
-        const appBox = document.getElementById('app-box');
-        appBox.className = "app"; 
-        if(mode === 'kids') {
-            appBox.classList.add('kids-theme');
-            updateKitty("¡Tú puedes! 🐾");
-        }
+        document.getElementById('app-box').className = "app " + (mode === 'kids' ? 'kids-theme' : '');
         if(theme) document.getElementById('body-bg').className = `theme-${theme}`;
         showView('view-levels');
     }
@@ -169,12 +193,19 @@
     function updateStudy() {
         const v = database[curMode][curLvl][curIdx];
         document.getElementById('st-es').innerText = v.es;
+        document.getElementById('st-v1').innerText = v.v1;
+        document.getElementById('st-v2').innerText = v.v2;
+        document.getElementById('st-v3').innerText = v.v3;
+        // Mensaje del Gatito Tutor
+        document.getElementById('st-kitty-msg').innerText = kittyMsgs.study[Math.floor(Math.random()*kittyMsgs.study.length)];
+        speakCurrent();
     }
 
     function speakCurrent() {
         const v = (isGameMode) ? database.kids[0][curIdx] : database[curMode][curLvl][curIdx];
         const msg = new SpeechSynthesisUtterance(`${v.v1}, ${v.v2}, ${v.v3}`);
         msg.rate = document.getElementById('voice-speed').value;
+        msg.lang = 'en-US';
         window.speechSynthesis.speak(msg);
     }
 
@@ -187,6 +218,9 @@
         const v = (isGameMode) ? database.kids[0][curIdx] : database[curMode][curLvl][curIdx];
         document.getElementById('pr-es').innerText = `¿${v.es}?`;
         document.querySelectorAll('#view-practice input').forEach(i => i.value = "");
+        // Mensaje de Práctica adaptado
+        const msgs = curMode === 'kids' ? kittyMsgs.practiceKids : kittyMsgs.practiceTeens;
+        document.getElementById('pr-kitty-msg').innerText = msgs[Math.floor(Math.random()*msgs.length)];
     }
 
     function checkAnswer() {
@@ -196,49 +230,46 @@
                    document.getElementById('in3').value.trim().toLowerCase()];
 
         const correct = (r[0] === v.v1 && r[1] === v.v2 && r[2] === v.v3);
+        results.push({verb: v.es, status: correct ? '✅ Pro' : `❌ Repasar (${v.v1}, ${v.v2}, ${v.v3})`});
         
         if(correct) {
-            results.push({verb: v.es, status: '✅ Bien'});
+            new Audio('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3').play().catch(()=>{});
             if(isGameMode) kittyHappy();
         } else {
-            results.push({verb: v.es, status: '❌ Error (era: '+v.v1+')'});
-            updateKitty("¡No te rindas! 🍎");
+            document.getElementById('pr-kitty-msg').innerText = "¡Tranquilo, aprende del error! 🍎";
         }
 
         curIdx++;
         const limit = isGameMode ? database.kids[0].length : database[curMode][curLvl].length;
 
         if(curIdx < limit) {
-            loadPractice();
+            setTimeout(loadPractice, 600); // Pequeña pausa para Feedback visual
         } else {
             showSummary();
         }
     }
 
+    function kittyHappy() {
+        document.getElementById('pr-kitty-msg').innerText = "¡Ñam Ñam Rico! 🍖";
+        const h = document.getElementById('heart');
+        h.style.opacity = '1';
+        h.style.transform = 'translateY(-20px)';
+        setTimeout(() => { h.style.opacity = '0'; h.style.transform = 'translateY(0)'; }, 1000);
+    }
+
     function showSummary() {
         let html = "<ul>";
         results.forEach(r => html += `<li>${r.verb}: ${r.status}</li>`);
-        html += "</ul><p><b>¡Sigue practicando, vas muy bien! 🚀</b></p>";
+        html += "</ul><p>¡Tutor Kitty dice que vas genial! 🐱🚀</p>";
         document.getElementById('summary-list').innerHTML = html;
         showView('view-results');
     }
 
-    function updateKitty(msg) {
-        document.getElementById('kitty-bubble').innerText = msg;
-    }
-
-    function kittyHappy() {
-        updateKitty("¡Mmmm, rico! 🍖");
-        const h = document.getElementById('heart');
-        h.classList.add('heart-active');
-        setTimeout(() => h.classList.remove('heart-active'), 1000);
-    }
-
     function startKittyGame() {
         isGameMode = true; curMode = 'kids'; curIdx = 0; results = [];
-        updateKitty("¿Me das comida? 🐟");
         showView('view-practice');
         loadPractice();
+        document.getElementById('pr-kitty-msg').innerText = "¿Tengo hambre! 🐟";
     }
 </script>
 </body>
