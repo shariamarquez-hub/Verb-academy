@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verb Academy - Aprende Inglés</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+            --glass: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .app-container {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        /* Vistas de la App */
+        .view { display: none; }
+        .view.active { display: block; animation: fadeIn 0.5s; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tarjetas de Verbos */
+        .flashcard {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            border: 4px solid var(--primary);
+            margin: 20px 0;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 0 var(--secondary);
+        }
+
+        .level-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        /* Botones Estilizados */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            transition: 0.3s;
+            box-shadow: 0 5px 0 #4834d4;
+        }
+
+        .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #4834d4; }
+        .btn-secondary { background: var(--success); box-shadow: 0 5px 0 #009470; }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div id="menu-view" class="view active">
+        <h1>🎓 Verb Academy</h1>
+        <p>Elige tu nivel de hoy:</p>
+        <button class="btn" onclick="startLevel(0)">Nivel 1: Esenciales</button>
+        <button class="btn" onclick="startLevel(1)">Nivel 2: Intermedio</button>
+        <button class="btn" onclick="startLevel(2)">Nivel 3: Experto</button>
+    </div>
+
+    <div id="lesson-view" class="view">
+        <span class="level-badge" id="lesson-tag">Lección</span>
+        <div class="flashcard" id="flashcard-content">
+            <h2 id="card-es">Cargando...</h2>
+            <p>Inf: <strong id="card-v1"></strong></p>
+            <p>Past: <strong id="card-v2"></strong></p>
+            <p>Part: <strong id="card-v3"></strong></p>
+        </div>
+        <button class="btn btn-secondary" onclick="nextCard()">Siguiente Verbo</button>
+        <button class="btn" onclick="goToGame()">¡Ya me los sé! Jugar</button>
+    </div>
+
+    <div id="game-view" class="view">
+        <h2 id="game-verb">Verbo</h2>
+        <input type="text" id="in1" placeholder="Infinitive">
+        <input type="text" id="in2" placeholder="Past Simple">
+        <input type="text" id="in3" placeholder="Past Participle">
+        <button class="btn btn-secondary" onclick="checkMatch()">Comprobar</button>
+        <div id="game-feedback"></div>
+    </div>
+</div>
+
+<script>
+    const levels = [
+        [ // Nivel 1
+            {es: "Ser/Estar", v1: "be", v2: "was", v3: "been"},
+            {es: "Ir", v1: "go", v2: "went", v3: "gone"},
+            {es: "Hacer", v1: "do", v2: "did", v3: "done"}
+        ],
+        [ // Nivel 2
+            {es: "Romper", v1: "break", v2: "broke", v3: "broken"},
+            {es: "Comprar", v1: "buy", v2: "bought", v3: "bought"},
+            {es: "Elegir", v1: "choose", v2: "chose", v3: "chosen"}
+        ]
+    ];
+
+    let currentLevelIndex = 0;
+    let cardIndex = 0;
+
+    function showView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+    }
+
+    function startLevel(index) {
+        currentLevelIndex = index;
+        cardIndex = 0;
+        showView('lesson-view');
+        updateCard();
+    }
+
+    function updateCard() {
+        const verb = levels[currentLevelIndex][cardIndex];
+        document.getElementById('card-es').innerText = verb.es;
+        document.getElementById('card-v1').innerText = verb.v1;
+        document.getElementById('card-v2').innerText = verb.v2;
+        document.getElementById('card-v3').innerText = verb.v3;
+    }
+
+    function nextCard() {
+        cardIndex++;
+        if (cardIndex < levels[currentLevelIndex].length) {
+            updateCard();
+        } else {
+            alert("¡Has terminado la lección! Ahora a jugar.");
+            goToGame();
+        }
+    }
+
+    function goToGame() {
+        cardIndex = 0;
+        showView('game-view');
+        loadGameVerb();
+    }
+
+    function loadGameVerb() {
+        const verb = levels[currentLevelIndex][cardIndex];
+        document.getElementById('game-verb').innerText = verb.es;
+        document.querySelectorAll('input').forEach(i => i.value = "");
+    }
+
+    function checkMatch() {
+        const verb = levels[currentLevelIndex][cardIndex];
+        const v1 = document.getElementById('in1').value.trim().toLowerCase();
+        const v2 = document.getElementById('in2').value.trim().toLowerCase();
+        const v3 = document.getElementById('in3').value.trim().toLowerCase();
+
+        if (v1 === verb.v1 && v2 === verb.v2 && v3 === verb.v3) {
+            alert("¡Excelente!");
+            cardIndex++;
+            if (cardIndex < levels[currentLevelIndex].length) {
+                loadGameVerb();
+            } else {
+                alert("¡Nivel Completado! 🎉");
+                showView('menu-view');
+            }
+        } else {
+            alert("Casi... revisa los tiempos.");
+        }
+    }
+</script>
+</body>
+</html>
