@@ -3,213 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verb Academy - Aprende Inglés</title>
+    <title>Verb Academy: Kids & Teens</title>
     <style>
         :root {
             --primary: #6c5ce7;
-            --secondary: #a29bfe;
-            --success: #00b894;
-            --warning: #fdcb6e;
-            --danger: #d63031;
-            --glass: rgba(255, 255, 255, 0.9);
+            --kids-bg: #f7f1e3;
+            --teens-bg: #2d3436;
+            --accent-pink: #ff6b81;
+            --accent-green: #1dd1a1;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            font-family: 'Segoe UI', 'Comic Sans MS', sans-serif;
             margin: 0;
-            padding: 20px;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background 0.5s;
         }
 
         .app-container {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
+            background: white;
+            border-radius: 30px;
             padding: 2rem;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             text-align: center;
         }
 
-        /* Vistas de la App */
+        /* VISTAS */
         .view { display: none; }
         .view.active { display: block; animation: fadeIn 0.5s; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Tarjetas de Verbos */
-        .flashcard {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            border: 4px solid var(--primary);
-            margin: 20px 0;
-            font-size: 1.5rem;
-            box-shadow: 0 10px 0 var(--secondary);
-        }
-
-        .level-badge {
-            background: var(--primary);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            display: inline-block;
-        }
-
-        /* Botones Estilizados */
-        .btn {
-            background: var(--primary);
-            color: white;
+        /* MENU PRINCIPAL */
+        .menu-btn {
+            padding: 20px;
+            margin: 15px 0;
             border: none;
-            padding: 15px 30px;
-            border-radius: 15px;
+            border-radius: 20px;
+            width: 100%;
+            font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
-            width: 100%;
-            margin: 10px 0;
             transition: 0.3s;
-            box-shadow: 0 5px 0 #4834d4;
+            color: white;
         }
+        .btn-kids { background: var(--accent-pink); box-shadow: 0 8px 0 #e66767; }
+        .btn-teens { background: var(--primary); box-shadow: 0 8px 0 #4834d4; }
+        .menu-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #000; }
 
-        .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #4834d4; }
-        .btn-secondary { background: var(--success); box-shadow: 0 5px 0 #009470; }
+        /* ESTILO INFANTES */
+        .kids-mode .verb-display { font-size: 3.5rem; color: var(--accent-pink); animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        input {
-            width: 90%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 10px;
-            border: 2px solid #ddd;
-            font-size: 1.1rem;
-            text-align: center;
-        }
+        /* ESTILO ADOLESCENTES */
+        .teens-mode { background: #fff; border-top: 10px solid var(--primary); }
+        .teens-mode h2 { color: var(--primary); }
+
+        /* COMUNES */
+        .progress-bar { height: 10px; background: #eee; border-radius: 5px; margin: 15px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent-green); width: 0%; transition: width 0.5s; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 12px; text-align: center; font-size: 1.1rem; box-sizing: border-box; }
+        .check-btn { background: var(--accent-green); color: white; border: none; padding: 15px; width: 100%; border-radius: 15px; font-weight: bold; font-size: 1.2rem; cursor: pointer; margin-top: 10px; }
+        .back-btn { background: none; border: none; color: #888; text-decoration: underline; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
-<body>
+<body id="main-body">
 
 <div class="app-container">
-    <div id="menu-view" class="view active">
+    <div id="view-menu" class="view active">
         <h1>🎓 Verb Academy</h1>
-        <p>Elige tu nivel de hoy:</p>
-        <button class="btn" onclick="startLevel(0)">Nivel 1: Esenciales</button>
-        <button class="btn" onclick="startLevel(1)">Nivel 2: Intermedio</button>
-        <button class="btn" onclick="startLevel(2)">Nivel 3: Experto</button>
+        <p>¿Quién va a practicar hoy?</p>
+        <button class="menu-btn btn-kids" onclick="startApp('kids')">🧸 Niños<br><small>(Preescolar)</small></button>
+        <button class="menu-btn btn-teens" onclick="startApp('teens')">⚡ Adolescentes<br><small>(Nivel Pro)</small></button>
     </div>
 
-    <div id="lesson-view" class="view">
-        <span class="level-badge" id="lesson-tag">Lección</span>
-        <div class="flashcard" id="flashcard-content">
-            <h2 id="card-es">Cargando...</h2>
-            <p>Inf: <strong id="card-v1"></strong></p>
-            <p>Past: <strong id="card-v2"></strong></p>
-            <p>Part: <strong id="card-v3"></strong></p>
+    <div id="view-game" class="view">
+        <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+        <h2 id="mode-title">Modo</h2>
+        <div id="display-area">
+            <h1 id="verb-es" class="verb-display">...</h1>
+            <button id="audio-btn" style="font-size: 2rem; background: none; border: none; cursor: pointer;">🔊</button>
         </div>
-        <button class="btn btn-secondary" onclick="nextCard()">Siguiente Verbo</button>
-        <button class="btn" onclick="goToGame()">¡Ya me los sé! Jugar</button>
-    </div>
-
-    <div id="game-view" class="view">
-        <h2 id="game-verb">Verbo</h2>
-        <input type="text" id="in1" placeholder="Infinitive">
-        <input type="text" id="in2" placeholder="Past Simple">
-        <input type="text" id="in3" placeholder="Past Participle">
-        <button class="btn btn-secondary" onclick="checkMatch()">Comprobar</button>
-        <div id="game-feedback"></div>
+        
+        <div id="input-container">
+            <input type="text" id="v1" placeholder="Presente">
+            <input type="text" id="v2" placeholder="Pasado Simple">
+            <input type="text" id="v3" placeholder="Pasado Participio">
+        </div>
+        
+        <button class="check-btn" onclick="handleCheck()">¡LISTO! ✅</button>
+        <button class="back-btn" onclick="location.reload()">⬅ Volver al Menú</button>
     </div>
 </div>
 
 <script>
-    const levels = [
-        [ // Nivel 1
-            {es: "Ser/Estar", v1: "be", v2: "was", v3: "been"},
-            {es: "Ir", v1: "go", v2: "went", v3: "gone"},
-            {es: "Hacer", v1: "do", v2: "did", v3: "done"}
-        ],
-        [ // Nivel 2
-            {es: "Romper", v1: "break", v2: "broke", v3: "broken"},
-            {es: "Comprar", v1: "buy", v2: "bought", v3: "bought"},
-            {es: "Elegir", v1: "choose", v2: "chose", v3: "chosen"}
-        ]
+    const verbs = [
+        { es: "Correr 🏃", v1: "run", v2: "ran", v3: "run" },
+        { es: "Cantar 🎤", v1: "sing", v2: "sang", v3: "sung" },
+        { es: "Comer 🍎", v1: "eat", v2: "ate", v3: "eaten" },
+        { es: "Dormir 😴", v1: "sleep", v2: "slept", v3: "slept" },
+        { es: "Ir 🚗", v1: "go", v2: "went", v3: "gone" }
     ];
 
-    let currentLevelIndex = 0;
-    let cardIndex = 0;
+    let currentIdx = 0;
+    let currentMode = '';
 
-    function showView(viewId) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-    }
-
-    function startLevel(index) {
-        currentLevelIndex = index;
-        cardIndex = 0;
-        showView('lesson-view');
-        updateCard();
-    }
-
-    function updateCard() {
-        const verb = levels[currentLevelIndex][cardIndex];
-        document.getElementById('card-es').innerText = verb.es;
-        document.getElementById('card-v1').innerText = verb.v1;
-        document.getElementById('card-v2').innerText = verb.v2;
-        document.getElementById('card-v3').innerText = verb.v3;
-    }
-
-    function nextCard() {
-        cardIndex++;
-        if (cardIndex < levels[currentLevelIndex].length) {
-            updateCard();
+    function startApp(mode) {
+        currentMode = mode;
+        document.getElementById('view-menu').classList.remove('active');
+        document.getElementById('view-game').classList.add('active');
+        
+        if(mode === 'kids') {
+            document.body.style.background = "var(--kids-bg)";
+            document.getElementById('mode-title').innerText = "🎈 ¡A jugar!";
+            document.getElementById('verb-es').classList.add('verb-display');
         } else {
-            alert("¡Has terminado la lección! Ahora a jugar.");
-            goToGame();
+            document.body.style.background = "var(--teens-bg)";
+            document.getElementById('mode-title').innerText = "🧠 Entrenamiento Pro";
+            document.getElementById('verb-es').classList.remove('verb-display');
+            document.getElementById('verb-es').style.fontSize = "2.5rem";
         }
+        loadVerb();
     }
 
-    function goToGame() {
-        cardIndex = 0;
-        showView('game-view');
-        loadGameVerb();
-    }
-
-    function loadGameVerb() {
-        const verb = levels[currentLevelIndex][cardIndex];
-        document.getElementById('game-verb').innerText = verb.es;
+    function loadVerb() {
+        const v = verbs[currentIdx];
+        document.getElementById('verb-es').innerText = v.es;
         document.querySelectorAll('input').forEach(i => i.value = "");
+        updateUI();
+        if(currentMode === 'kids') speak();
     }
 
-    function checkMatch() {
-        const verb = levels[currentLevelIndex][cardIndex];
-        const v1 = document.getElementById('in1').value.trim().toLowerCase();
-        const v2 = document.getElementById('in2').value.trim().toLowerCase();
-        const v3 = document.getElementById('in3').value.trim().toLowerCase();
+    function speak() {
+        const v = verbs[currentIdx];
+        const msg = new SpeechSynthesisUtterance(`${v.v1}, ${v.v2}, ${v.v3}`);
+        msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
+    }
 
-        if (v1 === verb.v1 && v2 === verb.v2 && v3 === verb.v3) {
-            alert("¡Excelente!");
-            cardIndex++;
-            if (cardIndex < levels[currentLevelIndex].length) {
-                loadGameVerb();
+    document.getElementById('audio-btn').onclick = speak;
+
+    function handleCheck() {
+        const v = verbs[currentIdx];
+        const userV1 = document.getElementById('v1').value.trim().toLowerCase();
+        const userV2 = document.getElementById('v2').value.trim().toLowerCase();
+        const userV3 = document.getElementById('v3').value.trim().toLowerCase();
+
+        if(userV1 === v.v1 && userV2 === v.v2 && userV3 === v.v3) {
+            currentIdx++;
+            if(currentIdx >= verbs.length) {
+                alert("¡Felicidades! Has terminado.");
+                location.reload();
             } else {
-                alert("¡Nivel Completado! 🎉");
-                showView('menu-view');
+                loadVerb();
             }
         } else {
-            alert("Casi... revisa los tiempos.");
+            alert("¡Casi! Intenta de nuevo.");
         }
+    }
+
+    function updateUI() {
+        const percent = (currentIdx / verbs.length) * 100;
+        document.getElementById('progress').style.width = percent + "%";
     }
 </script>
 </body>
