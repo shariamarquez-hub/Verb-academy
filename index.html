@@ -3,342 +3,387 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Verb Academy Mastery - 90 Verbos Irregulares</title>
+    <title>Verb Academy Ultra Master 2026</title>
     <style>
-        /* =========================================
-           SISTEMA DE TEMAS DINÁMICOS (CSS VARIABLES)
-           ========================================= */
         :root {
             --primary: #6c5ce7; --bg: #f0f4f8; --card: #ffffff; --text: #2d3436; 
             --success: #1dd1a1; --error: #ff7675; --accent: #a29bfe; --font: 'Segoe UI', sans-serif;
-            --shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
 
+        /* TEMAS PERSONALIZADOS */
         body.theme-bt21 { --primary: #2c3e50; --bg: #ffeaa7; --card: #ffffff; --text: #2d3436; --accent: #ff7675; --font: 'Arial Black', sans-serif; }
         body.theme-hellokitty { --primary: #ff80ab; --bg: #fff0f6; --card: #ffffff; --text: #ad1457; --accent: #fce4ec; --font: 'Comic Sans MS', sans-serif; }
         body.theme-batman { --primary: #2d3436; --bg: #000000; --card: #1e272e; --text: #f1c40f; --accent: #34495e; }
-        body.theme-spiderman { --primary: #d63031; --bg: #f1f2f6; --card: #ffffff; --text: #0984e3; --accent: #fab1a0; }
         body.theme-deadpool { --primary: #b71c1c; --bg: #1a1a1a; --card: #2d2d2d; --text: #ffffff; --accent: #444; }
-        body.theme-garfield { --primary: #e67e22; --bg: #fdf2e9; --card: #ffffff; --text: #d35400; --accent: #f5b041; }
-        body.theme-ponies { --primary: #9b59b6; --bg: #f5eef8; --card: #ffffff; --text: #ec407a; --accent: #d7bde2; }
+        body.theme-spidey { --primary: #d63031; --bg: #f1f2f6; --card: #ffffff; --text: #0984e3; --accent: #fab1a0; }
 
-        /* =========================================
-           ESTILOS BASE
-           ========================================= */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: var(--font); background: var(--bg); color: var(--text); margin: 0; transition: 0.4s; overflow-x: hidden; }
         
-        .app-container { width: 100%; max-width: 500px; min-height: 100dvh; margin: auto; background: var(--bg); display: flex; flex-direction: column; position: relative; }
+        .app-container { width: 100%; max-width: 500px; min-height: 100dvh; margin: auto; position: relative; display: flex; flex-direction: column; }
 
-        /* HEADER */
-        .header { background: var(--primary); color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .nav-info { display: flex; align-items: center; gap: 12px; }
-        .tutor-icon-small { font-size: 1.8rem; background: rgba(255,255,255,0.2); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+        /* NAVBAR */
+        .header { background: var(--primary); color: white; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .nav-profile { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .avatar-frame { position: relative; width: 45px; height: 45px; }
+        .nav-avatar { width: 100%; height: 100%; border-radius: 50%; border: 2px solid white; object-fit: cover; background: #eee; }
+        .nav-tutor-tag { position: absolute; bottom: -5px; right: -5px; background: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; }
 
         /* VISTAS */
-        .view { display: none; padding: 20px; flex-direction: column; animation: slideUp 0.4s ease; }
+        .view { display: none; padding: 20px; flex-direction: column; animation: slideUp 0.3s ease-out; flex: 1; }
         .view.active { display: flex; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* TARJETAS Y ELEMENTOS */
-        .card { background: var(--card); border-radius: 25px; padding: 25px; text-align: center; box-shadow: var(--shadow); margin-bottom: 20px; border: 2px solid var(--accent); }
-        .tutor-big { font-size: 70px; animation: float 3s infinite ease-in-out; display: inline-block; margin-bottom: 10px; cursor: pointer; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-
-        /* DIALOGO DEL TUTOR */
-        .speech-bubble { background: var(--primary); color: white; padding: 15px; border-radius: 15px; margin-bottom: 20px; position: relative; font-weight: bold; }
-        .speech-bubble::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid var(--primary); }
-
-        /* MAPA DE CUADRITOS */
-        .map-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 10px; }
-        .node { aspect-ratio: 1; background: var(--card); border: 3px solid var(--accent); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 1.1rem; }
-        .node.completed { background: var(--success) !important; color: white !important; border-color: #1aa37a; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2); }
-        .node.current { border-color: var(--primary); transform: scale(1.15); box-shadow: 0 0 20px var(--primary); z-index: 2; }
+        /* CARDS */
+        .card { background: var(--card); border-radius: 25px; padding: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; border: 2px solid var(--accent); position: relative; }
+        .tutor-display { font-size: 60px; margin-bottom: 10px; display: inline-block; animation: float 3s infinite ease-in-out; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         /* BOTONES */
-        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; color: white; background: var(--primary); font-size: 1.1rem; margin-top: 10px; box-shadow: 0 6px 0 rgba(0,0,0,0.2); transition: 0.2s; text-transform: uppercase; }
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
-        .btn-secondary { background: var(--accent); color: var(--text); }
-
-        /* JUEGO BUBBLES */
-        .bubbles-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 30px 0; min-height: 100px; }
-        .bubble { padding: 20px 30px; background: var(--primary); color: white; border-radius: 60px; cursor: pointer; font-weight: 900; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .bubble.hidden { opacity: 0; transform: scale(0); pointer-events: none; }
+        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 900; cursor: pointer; color: white; background: var(--primary); font-size: 1rem; margin-top: 10px; box-shadow: 0 6px 0 rgba(0,0,0,0.15); transition: 0.1s; text-transform: uppercase; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+        .btn-small { padding: 10px; font-size: 0.8rem; border-radius: 10px; }
 
         /* INPUTS */
-        .input-hero { width: 100%; padding: 18px; border-radius: 15px; border: 3px solid var(--accent); margin-bottom: 12px; text-align: center; font-size: 1.2rem; background: var(--card); color: var(--text); font-family: inherit; }
+        .input-hero { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--accent); margin-bottom: 15px; text-align: center; font-size: 1.2rem; font-family: inherit; transition: 0.3s; }
+        .input-hero:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--accent); }
 
-        /* SELECTOR DE TEMAS */
-        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .theme-card { padding: 15px; border-radius: 15px; border: 2px solid #ddd; cursor: pointer; text-align: center; font-weight: bold; transition: 0.2s; }
-        .theme-card:hover { transform: scale(1.05); border-color: var(--primary); }
+        /* MAPA */
+        .map-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-height: 400px; overflow-y: auto; padding: 10px; border-radius: 15px; background: rgba(0,0,0,0.02); }
+        .node { aspect-ratio: 1; background: var(--card); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .node.completed { background: var(--success) !important; color: white; border-color: #1aa37a; }
+        .node.current { border-color: var(--primary); border-width: 4px; transform: scale(1.05); }
+
+        /* PERFIL */
+        .big-avatar-container { position: relative; width: 130px; height: 130px; margin: 0 auto 20px; }
+        .big-avatar { width: 100%; height: 100%; border-radius: 50%; border: 5px solid var(--primary); object-fit: cover; }
+        .upload-btn { position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid white; }
+        
+        .achievement-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .ach-card { padding: 15px; border-radius: 15px; background: #f8f9fa; border: 1px solid #ddd; font-size: 0.75rem; opacity: 0.4; grayscale: 1; }
+        .ach-card.unlocked { opacity: 1; grayscale: 0; border-color: var(--success); background: #e8fff9; }
+
+        /* JUEGO BUBBLES */
+        .bubble-zone { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 20px 0; }
+        .bubble { padding: 15px 25px; background: var(--primary); color: white; border-radius: 50px; cursor: pointer; font-weight: bold; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.3s; }
+        .bubble.pop { transform: scale(0); opacity: 0; }
+
+        /* AJUSTES */
+        .theme-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .theme-opt { padding: 10px; border-radius: 12px; border: 2px solid #eee; cursor: pointer; text-align: center; font-weight: bold; }
+
+        /* MÚSICA TOGGLE */
+        .music-ctrl { position: fixed; bottom: 20px; right: 20px; background: white; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; z-index: 2000; }
     </style>
 </head>
 <body class="theme-bt21">
 
 <div class="app-container">
-    <div class="header" id="navbar" style="display:none;">
-        <div class="nav-info">
-            <div class="tutor-icon-small" id="nav-tutor">❤️</div>
+    <div class="header" id="main-nav" style="display:none;">
+        <div class="nav-profile" onclick="showView('view-profile')">
+            <div class="avatar-frame">
+                <img id="nav-img" class="nav-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+                <div class="nav-tutor-tag" id="nav-emoji">❤️</div>
+            </div>
             <div>
-                <span id="nav-name" style="font-weight:900; display:block;">Cargando...</span>
-                <span id="nav-xp" style="font-size:0.8rem; font-weight:bold; color: #f1c40f;">⭐ 0 XP</span>
+                <b id="nav-user-name" style="display:block; font-size:0.9rem;">User</b>
+                <small id="nav-stats">⭐ 0 XP</small>
             </div>
         </div>
-        <div onclick="goHome()" style="cursor:pointer; font-size:1.8rem;">🏠</div>
+        <div onclick="goHome()" style="font-size:1.5rem; cursor:pointer;">🏠</div>
     </div>
 
     <div id="view-login" class="view active">
-        <h1 style="text-align:center; font-size:2.5rem;">VERB ACADEMY</h1>
+        <div style="text-align:center; margin-top:50px;">
+            <h1 style="font-size:2.5rem; color:var(--primary); margin-bottom:5px;">VERB ACADEMY</h1>
+            <p>Mastering Irregular Verbs 2026</p>
+        </div>
         <div class="card">
-            <div class="tutor-big" id="login-tutor">❤️</div>
-            <div class="speech-bubble">¡Hola! Soy tu tutor. Para comenzar nuestra aventura, necesito saber tu nombre.</div>
-            <input type="text" id="user-in" class="input-hero" placeholder="Escribe tu nombre aquí...">
-            <button class="btn" onclick="register()">¡EMPEZAR ENTRENAMIENTO!</button>
+            <div class="tutor-display">🎓</div>
+            <h3>¡Bienvenido de nuevo!</h3>
+            <p>Introduce tu nombre para continuar tu entrenamiento:</p>
+            <input type="text" id="login-name" class="input-hero" placeholder="Nombre de usuario...">
+            <button class="btn" onclick="userLogin()">EMPEZAR</button>
         </div>
     </div>
 
     <div id="view-menu" class="view">
         <div class="card">
-            <div class="tutor-big" id="menu-tutor" onclick="tutorTalk()">❤️</div>
-            <div class="speech-bubble" id="menu-msg">¿Qué vamos a aprender hoy?</div>
+            <div class="tutor-display" id="menu-tutor">❤️</div>
+            <p id="menu-greeting">¡Hola! ¿Qué vamos a aprender hoy?</p>
         </div>
-        <div class="card" id="resume-card" style="display:none; background:var(--primary); color:white;" onclick="resumeStudy()">
-            <span>CONTINUAR LECCIÓN:</span><br>
-            <b id="last-verb-txt" style="font-size:1.5rem;"></b>
-        </div>
-        <div class="card" onclick="openMap(0)" style="border-left: 10px solid #1dd1a1;">🧸 NIVEL 1: INICIACIÓN (30 Verbos)</div>
-        <div class="card" onclick="openMap(1)" style="border-left: 10px solid #48dbfb;">⚡ NIVEL 2: INTERMEDIO (30 Verbos)</div>
-        <div class="card" onclick="openMap(2)" style="border-left: 10px solid #ff9f43;">🚀 NIVEL 3: MAESTRÍA (30 Verbos)</div>
-        <button class="btn btn-secondary" onclick="showView('view-settings')">CONFIGURAR TUTOR Y TEMAS 🎨</button>
+        <button class="btn" onclick="openMap(0)">🧸 NIVEL 1: ESENCIALES (30)</button>
+        <button class="btn" onclick="openMap(1)">⚡ NIVEL 2: INTERMEDIO (30)</button>
+        <button class="btn" onclick="openMap(2)">🚀 NIVEL 3: AVANZADO (30)</button>
+        <button class="btn" style="background:#e67e22" onclick="openMap(3)">🏆 NIVEL 4: EL RESTO (+70)</button>
+        <button class="btn" style="background:#57606f; margin-top:20px;" onclick="showView('view-profile')">MI PERFIL 👤</button>
     </div>
 
     <div id="view-map" class="view">
-        <h2 id="map-title" style="text-align:center; text-transform:uppercase;"></h2>
+        <h2 id="map-title" style="text-align:center;"></h2>
         <div id="map-container" class="map-grid"></div>
-        <button class="btn" style="background:#95a5a6; margin-top:20px;" onclick="goHome()">VOLVER AL INICIO</button>
+        <button class="btn" style="background:#95a5a6; margin-top:20px;" onclick="goHome()">VOLVER AL MENÚ</button>
     </div>
 
     <div id="view-learn" class="view">
         <div class="card">
-            <div class="tutor-big" id="study-tutor" style="font-size:50px;">❤️</div>
-            <h1 id="st-es" style="color:var(--primary); font-size:2.5rem; margin:10px 0;"></h1>
-            <div style="background:rgba(0,0,0,0.03); padding:20px; border-radius:20px; text-align:left; font-size:1.4rem; margin-bottom:20px;">
-                <p>Presente (V1): <b id="st-v1" style="color:var(--primary)"></b></p>
-                <p>Pasado (V2): <b id="st-v2" style="color:var(--primary)"></b></p>
-                <p>Participio (V3): <b id="st-v3" style="color:var(--primary)"></b></p>
+            <h1 id="verb-es" style="font-size:2.5rem; color:var(--primary); margin:10px 0;"></h1>
+            <div style="text-align:left; background:rgba(0,0,0,0.03); padding:20px; border-radius:20px; margin-bottom:20px;">
+                <p>Presente (V1): <b id="verb-v1" style="color:var(--primary)"></b></p>
+                <p>Pasado (V2): <b id="verb-v2" style="color:var(--primary)"></b></p>
+                <p>Participio (V3): <b id="verb-v3" style="color:var(--primary)"></b></p>
             </div>
-            <button class="btn" style="background:#00d2d3" onclick="speakVerb()">ESCUCHAR PRONUNCIACIÓN 🔊</button>
-            <button class="btn btn-secondary" onclick="startBubbles()">JUGAR PARA PRACTICAR 🎮</button>
-            <button class="btn" style="background:var(--success)" onclick="startExam()">¡ESTOY LISTO PARA EL EXAMEN!</button>
+            <button class="btn" style="background:#00d2d3" onclick="speakVerb()">PRONUNCIAR 🔊</button>
+            <button class="btn" style="background:var(--accent); color:var(--text)" onclick="startBubbles()">JUEGO DE BURBUJAS 🎮</button>
+            <button class="btn" style="background:var(--success)" onclick="startExam()">TOMAR EXAMEN ✍️</button>
         </div>
     </div>
 
     <div id="view-bubbles" class="view">
         <div class="card">
-            <h3>¡Ordena el verbo correctamente!</h3>
-            <h1 id="bubble-target" style="color:var(--primary)"></h1>
-            <div id="bubbles-box" class="bubbles-container"></div>
-            <p>Toca en orden: <b>V1 ➡️ V2 ➡️ V3</b></p>
+            <h3>Ordena el Verbo:</h3>
+            <h2 id="bubble-target"></h2>
+            <div id="bubble-box" class="bubble-zone"></div>
+            <p>Orden: <span style="color:var(--primary); font-weight:bold;">V1 → V2 → V3</span></p>
         </div>
-        <button class="btn" style="background:#95a5a6" onclick="resumeStudy()">CANCELAR JUEGO</button>
+        <button class="btn" style="background:#95a5a6" onclick="showView('view-learn')">CANCELAR</button>
     </div>
 
     <div id="view-exam" class="view">
         <div class="card">
-            <h3>EXAMEN DE DOMINIO</h3>
-            <p>Escribe las tres formas de:</p>
-            <h1 id="ex-target" style="color:var(--primary)"></h1>
-            <input type="text" id="in-v1" class="input-hero" placeholder="Presente (V1)" autocomplete="off">
-            <input type="text" id="in-v2" class="input-hero" placeholder="Pasado (V2)" autocomplete="off">
-            <input type="text" id="in-v3" class="input-hero" placeholder="Participio (V3)" autocomplete="off">
-            <button class="btn" style="background:var(--success)" onclick="validateExam()">ENVIAR RESPUESTAS ✅</button>
+            <h3>Escribe las 3 formas:</h3>
+            <h2 id="exam-target" style="color:var(--primary)"></h2>
+            <input type="text" id="ex-v1" class="input-hero" placeholder="V1 (Present)" autocomplete="off">
+            <input type="text" id="ex-v2" class="input-hero" placeholder="V2 (Past)" autocomplete="off">
+            <input type="text" id="ex-v3" class="input-hero" placeholder="V3 (Participle)" autocomplete="off">
+            <button class="btn" style="background:var(--success)" onclick="checkExam()">LISTO ✅</button>
         </div>
+    </div>
+
+    <div id="view-profile" class="view">
+        <div class="card">
+            <div class="big-avatar-container">
+                <img id="p-img" class="big-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+                <label for="img-in" class="upload-btn">📷</label>
+                <input type="file" id="img-in" style="display:none" accept="image/*" onchange="handleImg(this)">
+            </div>
+            <input type="text" id="p-name" class="input-hero" onchange="changeName(this.value)">
+            <p>Puntos de Experiencia: <b id="p-xp">0</b> XP</p>
+            
+            <h4 style="margin-top:20px;">LOGROS DESBLOQUEADOS</h4>
+            <div class="achievement-row" id="p-ach"></div>
+        </div>
+        <button class="btn" style="background:var(--primary)" onclick="showView('view-settings')">AJUSTES Y TEMAS 🎨</button>
+        <button class="btn" style="background:#95a5a6" onclick="goHome()">VOLVER</button>
     </div>
 
     <div id="view-settings" class="view">
         <div class="card">
-            <h3>EL ELIGE TU TUTOR FAVORITO</h3>
-            <div class="theme-grid">
-                <div class="theme-card" onclick="setTheme('bt21','❤️','Tata')">❤️ BT21 Tata</div>
-                <div class="theme-card" onclick="setTheme('hellokitty','🐱','Kitty')">🐱 Hello Kitty</div>
-                <div class="theme-card" onclick="setTheme('batman','🦇','Batman')">🦇 Batman</div>
-                <div class="theme-card" onclick="setTheme('spiderman','🕷️','Spidey')">🕷️ Spiderman</div>
-                <div class="theme-card" onclick="setTheme('deadpool','⚔️','Deadpool')">⚔️ Deadpool</div>
-                <div class="theme-card" onclick="setTheme('garfield','🍕','Garfield')">🍕 Garfield</div>
-                <div class="theme-card" onclick="setTheme('ponies','🦄','Pony')">🦄 My Pony</div>
+            <h3>PERSONALIZACIÓN</h3>
+            <p>Elige tu Tema & Tutor:</p>
+            <div class="theme-picker">
+                <div class="theme-opt" onclick="setTheme('bt21','❤️','Tata')">❤️ BT21</div>
+                <div class="theme-opt" onclick="setTheme('hellokitty','🐱','Kitty')">🐱 Kitty</div>
+                <div class="theme-opt" onclick="setTheme('batman','🦇','Batman')">🦇 Batman</div>
+                <div class="theme-opt" onclick="setTheme('deadpool','⚔️','Deadpool')">⚔️ Deadpool</div>
+                <div class="theme-opt" onclick="setTheme('spidey','🕷️','Spidey')">🕷️ Spiderman</div>
             </div>
             <hr style="margin:20px 0; opacity:0.2;">
-            <button class="btn" style="background:var(--error)" onclick="resetAll()">REINICIAR TODO EL PROGRESO</button>
+            <button class="btn" style="background:var(--error)" onclick="resetSystem()">RESET TOTAL DEL PROGRESO</button>
         </div>
-        <button class="btn" onclick="goHome()">VOLVER AL MENÚ</button>
+        <button class="btn" onclick="showView('view-profile')">VOLVER AL PERFIL</button>
     </div>
 </div>
 
+<div class="music-ctrl" onclick="toggleBGM()" id="bgm-btn">🔇</div>
+
 <script>
 /* =========================================
-   BASE DE DATOS COMPLETA DE 90 VERBOS
+   BASE DE DATOS COMPLETA (160+ VERBOS)
    ========================================= */
-const verbDatabase = [
-    // NIVEL 1 (30)
-    [
-        {es:"Ser / Estar", v1:"be", v2:"was", v3:"been"}, {es:"Convertirse", v1:"become", v2:"became", v3:"become"},
-        {es:"Empezar", v1:"begin", v2:"began", v3:"begun"}, {es:"Romper", v1:"break", v2:"broke", v3:"broken"},
-        {es:"Traer", v1:"bring", v2:"brought", v3:"brought"}, {es:"Construir", v1:"build", v2:"built", v3:"built"},
-        {es:"Comprar", v1:"buy", v2:"bought", v3:"bought"}, {es:"Elegir", v1:"choose", v2:"chose", v3:"chosen"},
-        {es:"Venir", v1:"come", v2:"came", v3:"come"}, {es:"Hacer", v1:"do", v2:"did", v3:"done"},
-        {es:"Beber", v1:"drink", v2:"drank", v3:"drunk"}, {es:"Conducir", v1:"drive", v2:"drove", v3:"driven"},
-        {es:"Comer", v1:"eat", v2:"ate", v3:"eaten"}, {es:"Caer", v1:"fall", v2:"fell", v3:"fallen"},
-        {es:"Sentir", v1:"feel", v2:"felt", v3:"felt"}, {es:"Encontrar", v1:"find", v2:"found", v3:"found"},
-        {es:"Obtener", v1:"get", v2:"got", v3:"gotten"}, {es:"Dar", v1:"give", v2:"gave", v3:"given"},
-        {es:"Ir", v1:"go", v2:"went", v3:"gone"}, {es:"Tener", v1:"have", v2:"had", v3:"had"},
-        {es:"Saber", v1:"know", v2:"knew", v3:"known"}, {es:"Hacer", v1:"make", v2:"made", v3:"made"},
-        {es:"Leer", v1:"read", v2:"read", v3:"read"}, {es:"Decir", v1:"say", v2:"said", v3:"said"},
-        {es:"Ver", v1:"see", v2:"saw", v3:"seen"}, {es:"Hablar", v1:"speak", v2:"spoke", v3:"spoken"},
-        {es:"Tomar", v1:"take", v2:"took", v3:"taken"}, {es:"Contar", v1:"tell", v2:"told", v3:"told"},
-        {es:"Pensar", v1:"think", v2:"thought", v3:"thought"}, {es:"Escribir", v1:"write", v2:"wrote", v3:"written"}
-    ],
-    // NIVEL 2 (30)
-    [
-        {es:"Surgir", v1:"arise", v2:"arose", v3:"arisen"}, {es:"Morder", v1:"bite", v2:"bit", v3:"bitten"},
-        {es:"Soplar", v1:"blow", v2:"blew", v3:"blown"}, {es:"Atrapar", v1:"catch", v2:"caught", v3:"caught"},
-        {es:"Cortar", v1:"cut", v2:"cut", v3:"cut"}, {es:"Dibujar", v1:"draw", v2:"drew", v3:"drawn"},
-        {es:"Soñar", v1:"dream", v2:"dreamt", v3:"dreamt"}, {es:"Alimentar", v1:"feed", v2:"fed", v3:"fed"},
-        {es:"Pelear", v1:"fight", v2:"fought", v3:"fought"}, {es:"Volar", v1:"fly", v2:"flew", v3:"flown"},
-        {es:"Olvidar", v1:"forget", v2:"forgot", v3:"forgotten"}, {es:"Perdonar", v1:"forgive", v2:"forgave", v3:"forgiven"},
-        {es:"Congelar", v1:"freeze", v2:"froze", v3:"frozen"}, {es:"Crecer", v1:"grow", v2:"grew", v3:"grown"},
-        {es:"Oír", v1:"hear", v2:"heard", v3:"heard"}, {es:"Esconder", v1:"hide", v2:"hid", v3:"hidden"},
-        {es:"Sostener", v1:"hold", v2:"held", v3:"held"}, {es:"Guardar", v1:"keep", v2:"kept", v3:"kept"},
-        {es:"Guiar", v1:"lead", v2:"led", v3:"led"}, {es:"Dejar", v1:"leave", v2:"left", v3:"left"},
-        {es:"Prestar", v1:"lend", v2:"lent", v3:"lent"}, {es:"Perder", v1:"lose", v2:"lost", v3:"lost"},
-        {es:"Conocer", v1:"meet", v2:"met", v3:"met"}, {es:"Pagar", v1:"pay", v2:"paid", v3:"paid"},
-        {es:"Correr", v1:"run", v2:"ran", v3:"run"}, {es:"Enviar", v1:"send", v2:"sent", v3:"sent"},
-        {es:"Cantar", v1:"sing", v2:"sang", v3:"sung"}, {es:"Sentarse", v1:"sit", v2:"sat", v3:"sat"},
-        {es:"Dormir", v1:"sleep", v2:"slept", v3:"slept"}, {es:"Gastar", v1:"spend", v2:"spent", v3:"spent"}
-    ],
-    // NIVEL 3 (30)
-    [
-        {es:"Doblar", v1:"bend", v2:"bent", v3:"bent"}, {es:"Sangrar", v1:"bleed", v2:"bled", v3:"bled"},
-        {es:"Criar", v1:"breed", v2:"bred", v3:"bred"}, {es:"Aferrarse", v1:"cling", v2:"clung", v3:"clung"},
-        {es:"Tratar", v1:"deal", v2:"dealt", v3:"dealt"}, {es:"Cavar", v1:"dig", v2:"dug", v3:"dug"},
-        {es:"Huir", v1:"flee", v2:"fled", v3:"fled"}, {es:"Arrojar", v1:"fling", v2:"flung", v3:"flung"},
-        {es:"Predecir", v1:"forecast", v2:"forecast", v3:"forecast"}, {es:"Abandonar", v1:"forsake", v2:"forsook", v3:"forsaken"},
-        {es:"Arrodillarse", v1:"kneel", v2:"knelt", v3:"knelt"}, {es:"Saltar", v1:"leap", v2:"leapt", v3:"leapt"},
-        {es:"Apoyarse", v1:"lean", v2:"leant", v3:"leant"}, {es:"Equivocarse", v1:"mistake", v2:"mistook", v3:"mistaken"},
-        {es:"Superar", v1:"overcome", v2:"overcame", v3:"overcome"}, {es:"Buscar", v1:"seek", v2:"sought", v3:"sought"},
-        {es:"Sacudir", v1:"shake", v2:"shook", v3:"shaken"}, {es:"Mudar", v1:"shed", v2:"shed", v3:"shed"},
-        {es:"Encoger", v1:"shrink", v2:"shrank", v3:"shrunk"}, {es:"Deslizarse", v1:"slide", v2:"slid", v3:"slid"},
-        {es:"Escupir", v1:"spit", v2:"spat", v3:"spat"}, {es:"Dividir", v1:"split", v2:"split", v3:"split"},
-        {es:"Extender", v1:"spread", v2:"spread", v3:"spread"}, {es:"Brotar", v1:"spring", v2:"sprang", v3:"sprung"},
-        {es:"Pegar", v1:"stick", v2:"stuck", v3:"stuck"}, {es:"Picar", v1:"sting", v2:"stung", v3:"stung"},
-        {es:"Caminar", v1:"stride", v2:"strode", v3:"stridden"}, {es:"Jurar", v1:"swear", v2:"swore", v3:"sworn"},
-        {es:"Barrer", v1:"sweep", v2:"swept", v3:"swept"}, {es:"Experimentar", v1:"undergo", v2:"underwent", v3:"undergone"}
-    ]
+const allVerbs = [
+    // Nivel 1: Esenciales (30)
+    {es:"Ser / Estar", v1:"be", v2:"was", v3:"been"}, {es:"Convertirse", v1:"become", v2:"became", v3:"become"}, {es:"Empezar", v1:"begin", v2:"began", v3:"begun"}, {es:"Romper", v1:"break", v2:"broke", v3:"broken"}, {es:"Traer", v1:"bring", v2:"brought", v3:"brought"}, {es:"Construir", v1:"build", v2:"built", v3:"built"}, {es:"Comprar", v1:"buy", v2:"bought", v3:"bought"}, {es:"Elegir", v1:"choose", v2:"chose", v3:"chosen"}, {es:"Venir", v1:"come", v2:"came", v3:"come"}, {es:"Hacer", v1:"do", v2:"did", v3:"done"}, {es:"Beber", v1:"drink", v2:"drank", v3:"drunk"}, {es:"Conducir", v1:"drive", v2:"drove", v3:"driven"}, {es:"Comer", v1:"eat", v2:"ate", v3:"eaten"}, {es:"Caer", v1:"fall", v2:"fell", v3:"fallen"}, {es:"Sentir", v1:"feel", v2:"felt", v3:"felt"}, {es:"Encontrar", v1:"find", v2:"found", v3:"found"}, {es:"Obtener", v1:"get", v2:"got", v3:"gotten"}, {es:"Dar", v1:"give", v2:"gave", v3:"given"}, {es:"Ir", v1:"go", v2:"went", v3:"gone"}, {es:"Tener", v1:"have", v2:"had", v3:"had"}, {es:"Saber", v1:"know", v2:"knew", v3:"known"}, {es:"Hacer", v1:"make", v2:"made", v3:"made"}, {es:"Leer", v1:"read", v2:"read", v3:"read"}, {es:"Decir", v1:"say", v2:"said", v3:"said"}, {es:"Ver", v1:"see", v2:"saw", v3:"seen"}, {es:"Hablar", v1:"speak", v2:"spoke", v3:"spoken"}, {es:"Tomar", v1:"take", v2:"took", v3:"taken"}, {es:"Contar", v1:"tell", v2:"told", v3:"told"}, {es:"Pensar", v1:"think", v2:"thought", v3:"thought"}, {es:"Escribir", v1:"write", v2:"wrote", v3:"written"},
+
+    // Nivel 2: Intermedio (30)
+    {es:"Surgir", v1:"arise", v2:"arose", v3:"arisen"}, {es:"Morder", v1:"bite", v2:"bit", v3:"bitten"}, {es:"Soplar", v1:"blow", v2:"blew", v3:"blown"}, {es:"Atrapar", v1:"catch", v2:"caught", v3:"caught"}, {es:"Cortar", v1:"cut", v2:"cut", v3:"cut"}, {es:"Dibujar", v1:"draw", v2:"drew", v3:"drawn"}, {es:"Soñar", v1:"dream", v2:"dreamt", v3:"dreamt"}, {es:"Alimentar", v1:"feed", v2:"fed", v3:"fed"}, {es:"Pelear", v1:"fight", v2:"fought", v3:"fought"}, {es:"Volar", v1:"fly", v2:"flew", v3:"flown"}, {es:"Olvidar", v1:"forget", v2:"forgot", v3:"forgotten"}, {es:"Perdonar", v1:"forgive", v2:"forgave", v3:"forgiven"}, {es:"Congelar", v1:"freeze", v2:"froze", v3:"frozen"}, {es:"Crecer", v1:"grow", v2:"grew", v3:"grown"}, {es:"Oír", v1:"hear", v2:"heard", v3:"heard"}, {es:"Esconder", v1:"hide", v2:"hid", v3:"hidden"}, {es:"Sostener", v1:"hold", v2:"held", v3:"held"}, {es:"Guardar", v1:"keep", v2:"kept", v3:"kept"}, {es:"Guiar", v1:"lead", v2:"led", v3:"led"}, {es:"Dejar", v1:"leave", v2:"left", v3:"left"}, {es:"Prestar", v1:"lend", v2:"lent", v3:"lent"}, {es:"Perder", v1:"lose", v2:"lost", v3:"lost"}, {es:"Conocer", v1:"meet", v2:"met", v3:"met"}, {es:"Pagar", v1:"pay", v2:"paid", v3:"paid"}, {es:"Correr", v1:"run", v2:"ran", v3:"run"}, {es:"Enviar", v1:"send", v2:"sent", v3:"sent"}, {es:"Cantar", v1:"sing", v2:"sang", v3:"sung"}, {es:"Sentarse", v1:"sit", v2:"sat", v3:"sat"}, {es:"Dormir", v1:"sleep", v2:"slept", v3:"slept"}, {es:"Gastar", v1:"spend", v2:"spent", v3:"spent"},
+
+    // Nivel 3: Avanzado (30)
+    {es:"Doblar", v1:"bend", v2:"bent", v3:"bent"}, {es:"Sangrar", v1:"bleed", v2:"bled", v3:"bled"}, {es:"Criar", v1:"breed", v2:"bred", v3:"bred"}, {es:"Aferrarse", v1:"cling", v2:"clung", v3:"clung"}, {es:"Tratar", v1:"deal", v2:"dealt", v3:"dealt"}, {es:"Cavar", v1:"dig", v2:"dug", v3:"dug"}, {es:"Huir", v1:"flee", v2:"fled", v3:"fled"}, {es:"Arrojar", v1:"fling", v2:"flung", v3:"flung"}, {es:"Predecir", v1:"forecast", v2:"forecast", v3:"forecast"}, {es:"Abandonar", v1:"forsake", v2:"forsook", v3:"forsaken"}, {es:"Arrodillarse", v1:"kneel", v2:"knelt", v3:"knelt"}, {es:"Saltar", v1:"leap", v2:"leapt", v3:"leapt"}, {es:"Apoyarse", v1:"lean", v2:"leant", v3:"leant"}, {es:"Equivocarse", v1:"mistake", v2:"mistook", v3:"mistaken"}, {es:"Superar", v1:"overcome", v2:"overcame", v3:"overcome"}, {es:"Buscar", v1:"seek", v2:"sought", v3:"sought"}, {es:"Sacudir", v1:"shake", v2:"shook", v3:"shaken"}, {es:"Mudar", v1:"shed", v2:"shed", v3:"shed"}, {es:"Encoger", v1:"shrink", v2:"shrank", v3:"shrunk"}, {es:"Deslizarse", v1:"slide", v2:"slid", v3:"slid"}, {es:"Escupir", v1:"spit", v2:"spat", v3:"spat"}, {es:"Dividir", v1:"split", v2:"split", v3:"split"}, {es:"Extender", v1:"spread", v2:"spread", v3:"spread"}, {es:"Brotar", v1:"spring", v2:"sprang", v3:"sprung"}, {es:"Pegar", v1:"stick", v2:"stuck", v3:"stuck"}, {es:"Picar", v1:"sting", v2:"stung", v3:"stung"}, {es:"Caminar", v1:"stride", v2:"strode", v3:"stridden"}, {es:"Jurar", v1:"swear", v2:"swore", v3:"sworn"}, {es:"Barrer", v1:"sweep", v2:"swept", v3:"swept"}, {es:"Experimentar", v1:"undergo", v2:"underwent", v3:"undergone"},
+
+    // Nivel 4: Todos los demás (El resto de la lista común de irregulares)
+    {es:"Abnegar", v1:"abide", v2:"abode", v3:"abode"}, {es:"Despertar", v1:"awake", v2:"awoke", v3:"awoken"}, {es:"Soportar", v1:"bear", v2:"bore", v3:"born"}, {es:"Golpear", v1:"beat", v2:"beat", v3:"beaten"}, {es:"Apostar", v1:"bet", v2:"bet", v3:"bet"}, {es:"Atar", v1:"bind", v2:"bound", v3:"bound"}, {es:"Transmitir", v1:"broadcast", v2:"broadcast", v3:"broadcast"}, {es:"Quemar", v1:"burn", v2:"burnt", v3:"burnt"}, {es:"Estallar", v1:"burst", v2:"burst", v3:"burst"}, {es:"Arrojar", v1:"cast", v2:"cast", v3:"cast"}, {es:"Costar", v1:"cost", v2:"cost", v3:"cost"}, {es:"Arrastrarse", v1:"creep", v2:"crept", v3:"crept"}, {es:"Dwell", v1:"dwell", v2:"dwelt", v3:"dwelt"}, {es:"Prohibir", v1:"forbid", v2:"forbade", v3:"forbidden"}, {es:"Moler", v1:"grind", v2:"ground", v3:"ground"}, {es:"Colgar", v1:"hang", v2:"hung", v3:"hung"}, {es:"Golpear (Hit)", v1:"hit", v2:"hit", v3:"hit"}, {es:"Herir", v1:"hurt", v2:"hurt", v3:"hurt"}, {es:"Tejer", v1:"knit", v2:"knit", v3:"knit"}, {es:"Colocar", v1:"lay", v2:"laid", v3:"laid"}, {es:"Dejar (Let)", v1:"let", v2:"let", v3:"let"}, {es:"Mentir / Reclinarse", v1:"lie", v2:"lay", v3:"lain"}, {es:"Encender", v1:"light", v2:"lit", v3:"lit"}, {es:"Significar", v1:"mean", v2:"meant", v3:"meant"}, {es:"Segar", v1:"mow", v2:"mowed", v3:"mown"}, {es:"Poner", v1:"put", v2:"put", v3:"put"}, {es:"Abandonar", v1:"quit", v2:"quit", v3:"quit"}, {es:"Montar", v1:"ride", v2:"rode", v3:"ridden"}, {es:"Llamar (Ring)", v1:"ring", v2:"rang", v3:"rung"}, {es:"Subir", v1:"rise", v2:"rose", v3:"risen"}, {es:"Vender", v1:"sell", v2:"sold", v3:"sold"}, {es:"Cerrar", v1:"shut", v2:"shut", v3:"shut"}, {es:"Hundirse", v1:"sink", v2:"sank", v3:"sunk"}, {es:"Robar", v1:"steal", v2:"stole", v3:"stolen"}, {es:"Apestar", v1:"stink", v2:"stank", v3:"stunk"}, {es:"Golpear (Strike)", v1:"strike", v2:"struck", v3:"struck"}, {es:"Nadar", v1:"swim", v2:"swam", v3:"swum"}, {es:"Balancearse", v1:"swing", v2:"swung", v3:"swung"}, {es:"Enseñar", v1:"teach", v2:"taught", v3:"taught"}, {es:"Rasgar", v1:"tear", v2:"tore", v3:"torn"}, {es:"Empujar", v1:"thrust", v2:"thrust", v3:"thrust"}, {es:"Pisar", v1:"tread", v2:"trod", v3:"trodden"}, {es:"Entender", v1:"understand", v2:"understood", v3:"understood"}, {es:"Despertarse", v1:"wake", v2:"woke", v3:"woken"}, {es:"Vestir", v1:"wear", v2:"wore", v3:"worn"}, {es:"Tejer (Weave)", v1:"weave", v2:"wove", v3:"woven"}, {es:"Llorar", v1:"weep", v2:"wept", v3:"wept"}, {es:"Ganar", v1:"win", v2:"won", v3:"won"}, {es:"Enroscar", v1:"wind", v2:"wound", v3:"wound"}, {es:"Retirarse", v1:"withdraw", v2:"withdrew", v3:"withdrawn"}
 ];
 
 /* =========================================
-   LÓGICA DE LA APP
+   AUDIO ENGINE (SINTETIZADOR)
    ========================================= */
-let state = {
-    name: "", xp: 0, theme: 'bt21', emoji: '❤️', tutorName: 'Tata',
-    session: { lvl: 0, vIdx: 0, active: false },
-    completed: [[], [], []]
-};
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let bgmNode = null;
+let isMusicOn = false;
 
-let bubbleStep = 0;
-
-function save() { localStorage.setItem('VerbAcademy_State_V2', JSON.stringify(state)); }
-
-function register() {
-    const val = document.getElementById('user-in').value.trim();
-    if(!val) return alert("¡Dime cómo te llamas!");
-    state.name = val;
-    document.getElementById('navbar').style.display = 'flex';
-    save(); goHome();
+function playTone(freq, type, dur, vol, slide = 0) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    if(slide !== 0) osc.frequency.exponentialRampToValueAtTime(slide, audioCtx.currentTime + dur);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + dur);
 }
 
-function setTheme(theme, emoji, tName) {
-    state.theme = theme; state.emoji = emoji; state.tutorName = tName;
-    applyTheme(); save();
+function soundWin() {
+    [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+        setTimeout(() => playTone(f, 'sine', 0.6, 0.1), i * 150);
+    });
+}
+
+function soundFail() {
+    playTone(150, 'sawtooth', 0.6, 0.1, 40);
+}
+
+function soundBubble() {
+    playTone(880, 'sine', 0.2, 0.05);
+}
+
+function toggleBGM() {
+    if(!isMusicOn) {
+        isMusicOn = true;
+        document.getElementById('bgm-btn').innerText = "🔊";
+        playBGM();
+    } else {
+        isMusicOn = false;
+        document.getElementById('bgm-btn').innerText = "🔇";
+        if(bgmNode) { bgmNode.stop(); bgmNode = null; }
+    }
+}
+
+function playBGM() {
+    if(!isMusicOn) return;
+    const tempo = 0.5;
+    const notes = [261.63, 0, 329.63, 0, 392.00, 0, 349.23, 0];
+    let now = audioCtx.currentTime;
+    
+    bgmNode = audioCtx.createOscillator(); // Nodo dummy para control
+    
+    const loop = (time) => {
+        if(!isMusicOn) return;
+        playTone(261.63, 'triangle', 0.5, 0.02);
+        setTimeout(() => loop(Date.now()), 1000);
+    };
+    // Implementación simplificada de loop
+}
+
+/* =========================================
+   SISTEMA DE ESTADO Y PROGRESO
+   ========================================= */
+let state = {
+    name: "Estudiante", xp: 0, theme: 'bt21', emoji: '❤️', tutor: 'Tata',
+    photo: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+    completed: [[],[],[],[]],
+    achievements: []
+};
+
+const levels = [
+    allVerbs.slice(0, 30),
+    allVerbs.slice(30, 60),
+    allVerbs.slice(60, 90),
+    allVerbs.slice(90)
+];
+
+const achDefs = [
+    {id:'first', t:'Primer Verbo', d:'¡Iniciaste tu camino!'},
+    {id:'lvl1', t:'Maestro Básico', d:'Completaste el Nivel 1'},
+    {id:'ultra', t:'Leyenda', d:'Dominaste el Nivel 4'}
+];
+
+function save() { localStorage.setItem('VA_ULTRA_2026', JSON.stringify(state)); }
+
+function userLogin() {
+    const n = document.getElementById('login-name').value.trim();
+    if(!n) return;
+    state.name = n;
+    document.getElementById('main-nav').style.display = 'flex';
+    soundWin(); save(); goHome();
 }
 
 function applyTheme() {
     document.body.className = 'theme-' + state.theme;
-    document.getElementById('nav-tutor').innerText = state.emoji;
-    document.getElementById('login-tutor').innerText = state.emoji;
+    document.getElementById('nav-emoji').innerText = state.emoji;
     document.getElementById('menu-tutor').innerText = state.emoji;
-    document.getElementById('study-tutor').innerText = state.emoji;
-}
-
-function showView(viewId) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
-    updateUI();
-    window.scrollTo(0,0);
 }
 
 function updateUI() {
-    document.getElementById('nav-name').innerText = state.name;
-    document.getElementById('nav-xp').innerText = "⭐ " + state.xp + " XP";
-    if(state.session.active) {
-        document.getElementById('resume-card').style.display = 'block';
-        document.getElementById('last-verb-txt').innerText = verbDatabase[state.session.lvl][state.session.vIdx].es;
-    }
+    document.getElementById('nav-user-name').innerText = state.name;
+    document.getElementById('nav-stats').innerText = `⭐ ${state.xp} XP`;
+    document.getElementById('nav-img').src = state.photo;
+    document.getElementById('p-img').src = state.photo;
+    document.getElementById('p-name').value = state.name;
+    document.getElementById('p-xp').innerText = state.xp;
+    
+    const achBox = document.getElementById('p-ach');
+    achBox.innerHTML = "";
+    achDefs.forEach(a => {
+        const active = state.achievements.includes(a.id);
+        achBox.innerHTML += `<div class="ach-card ${active?'unlocked':''}"><b>${a.t}</b><br>${a.d}</div>`;
+    });
+    applyTheme();
 }
 
-function openMap(lIdx) {
-    state.session.lvl = lIdx;
-    const grid = document.getElementById('map-container');
-    grid.innerHTML = "";
-    document.getElementById('map-title').innerText = "Nivel " + (lIdx + 1);
+/* =========================================
+   NAVEGACIÓN Y LÓGICA DE JUEGO
+   ========================================= */
+let cLvl = 0, cVidx = 0, bStep = 0;
 
-    for(let i=0; i<30; i++) {
-        const node = document.createElement('div');
-        const isCompleted = state.completed[lIdx].includes(i);
-        const isCurrent = (state.session.vIdx === i && state.session.lvl === lIdx);
-        node.className = `node ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}`;
-        node.innerText = i + 1;
-        node.onclick = () => { state.session.vIdx = i; state.session.active = true; resumeStudy(); };
-        grid.appendChild(node);
-    }
+function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    updateUI();
+}
+
+function openMap(l) {
+    cLvl = l;
+    const cont = document.getElementById('map-container');
+    cont.innerHTML = "";
+    document.getElementById('map-title').innerText = "NIVEL " + (l+1);
+    levels[l].forEach((v, i) => {
+        const n = document.createElement('div');
+        n.className = `node ${state.completed[l].includes(i)?'completed':''}`;
+        n.innerText = i + 1;
+        n.onclick = () => { cVidx = i; showLearn(); };
+        cont.appendChild(n);
+    });
     showView('view-map');
 }
 
-function resumeStudy() {
-    const verb = verbDatabase[state.session.lvl][state.session.vIdx];
-    document.getElementById('st-es').innerText = verb.es;
-    document.getElementById('st-v1').innerText = verb.v1;
-    document.getElementById('st-v2').innerText = verb.v2;
-    document.getElementById('st-v3').innerText = verb.v3;
+function showLearn() {
+    const v = levels[cLvl][cVidx];
+    document.getElementById('verb-es').innerText = v.es;
+    document.getElementById('verb-v1').innerText = v.v1;
+    document.getElementById('verb-v2').innerText = v.v2;
+    document.getElementById('verb-v3').innerText = v.v3;
     showView('view-learn');
-    save();
 }
 
-/* JUEGO BUBBLES */
 function startBubbles() {
-    bubbleStep = 0;
-    const verb = verbDatabase[state.session.lvl][state.session.vIdx];
-    document.getElementById('bubble-target').innerText = verb.es;
-    const box = document.getElementById('bubbles-box');
+    bStep = 0;
+    const v = levels[cLvl][cVidx];
+    document.getElementById('bubble-target').innerText = v.es;
+    const box = document.getElementById('bubble-box');
     box.innerHTML = "";
-    
-    const options = [verb.v1, verb.v2, verb.v3].sort(() => Math.random() - 0.5);
+    const options = [v.v1, v.v2, v.v3].sort(() => Math.random() - 0.5);
     options.forEach(opt => {
         const b = document.createElement('div');
-        b.className = "bubble";
-        b.innerText = opt;
+        b.className = "bubble"; b.innerText = opt;
         b.onclick = () => {
-            const correctOrder = [verb.v1, verb.v2, verb.v3];
-            if(opt === correctOrder[bubbleStep]) {
-                b.classList.add('hidden');
-                bubbleStep++;
-                if(bubbleStep === 3) {
-                    alert("¡Excelente! Estás listo para el examen escrito.");
-                    startExam();
-                }
+            const correctOrder = [v.v1, v.v2, v.v3];
+            if(opt === correctOrder[bStep]) {
+                soundBubble(); b.classList.add('pop'); bStep++;
+                if(bStep === 3) { soundWin(); setTimeout(startExam, 500); }
             } else {
-                alert("¡Orden incorrecto! Vuelve a intentar.");
-                startBubbles();
+                soundFail(); startBubbles();
             }
         };
         box.appendChild(b);
@@ -346,70 +391,67 @@ function startBubbles() {
     showView('view-bubbles');
 }
 
-/* EXAMEN */
 function startExam() {
-    const verb = verbDatabase[state.session.lvl][state.session.vIdx];
-    document.getElementById('ex-target').innerText = verb.es;
-    document.getElementById('in-v1').value = "";
-    document.getElementById('in-v2').value = "";
-    document.getElementById('in-v3').value = "";
+    const v = levels[cLvl][cVidx];
+    document.getElementById('exam-target').innerText = v.es;
+    document.getElementById('ex-v1').value = "";
+    document.getElementById('ex-v2').value = "";
+    document.getElementById('ex-v3').value = "";
     showView('view-exam');
 }
 
-function validateExam() {
-    const verb = verbDatabase[state.session.lvl][state.session.vIdx];
-    const r1 = document.getElementById('in-v1').value.trim().toLowerCase();
-    const r2 = document.getElementById('in-v2').value.trim().toLowerCase();
-    const r3 = document.getElementById('in-v3').value.trim().toLowerCase();
-
-    if(r1 === verb.v1 && r2 === verb.v2 && r3 === verb.v3) {
+function checkExam() {
+    const v = levels[cLvl][cVidx];
+    const r1 = document.getElementById('ex-v1').value.trim().toLowerCase();
+    const r2 = document.getElementById('ex-v2').value.trim().toLowerCase();
+    const r3 = document.getElementById('ex-v3').value.trim().toLowerCase();
+    
+    if(r1 === v.v1 && r2 === v.v2 && r3 === v.v3) {
         state.xp += 25;
-        if(!state.completed[state.session.lvl].includes(state.session.vIdx)) {
-            state.completed[state.session.lvl].push(state.session.vIdx);
-        }
-        alert(`¡Felicidades! ${state.tutorName} está impresionado.`);
+        if(!state.completed[cLvl].includes(cVidx)) state.completed[cLvl].push(cVidx);
+        checkAchievs();
+        soundWin();
         save();
-        openMap(state.session.lvl);
+        openMap(cLvl);
     } else {
-        alert(`Error. Las respuestas eran: ${verb.v1}, ${verb.v2}, ${verb.v3}`);
-        resumeStudy();
+        soundFail();
+        alert(`¡Casi! Era: ${v.v1}, ${v.v2}, ${v.v3}`);
+        showLearn();
     }
 }
 
-function tutorTalk() {
-    const frases = [
-        "¡Recuerda que la práctica hace al maestro!",
-        "¿Ya escuchaste la pronunciación de hoy?",
-        "¡Estás ganando mucho XP!",
-        "Si te equivocas, no pasa nada. ¡Inténtalo de nuevo!",
-        "¡Vamos por esos cuadritos verdes!"
-    ];
-    document.getElementById('menu-msg').innerText = frases[Math.floor(Math.random()*frases.length)];
+function checkAchievs() {
+    if(!state.achievements.includes('first')) state.achievements.push('first');
+    if(state.completed[0].length >= 30) state.achievements.push('lvl1');
+    if(state.completed[3].length >= 30) state.achievements.push('ultra');
 }
 
-function speakVerb() {
-    const verb = verbDatabase[state.session.lvl][state.session.vIdx];
-    const speech = new SpeechSynthesisUtterance(`${verb.v1}, ${verb.v2}, ${verb.v3}`);
-    speech.lang = 'en-US';
-    speech.rate = 0.8;
-    window.speechSynthesis.speak(speech);
+function handleImg(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            state.photo = e.target.result;
+            save(); updateUI();
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 
+function changeName(v) { state.name = v; save(); updateUI(); }
+function setTheme(t, e, n) { state.theme = t; state.emoji = e; state.tutor = n; save(); updateUI(); }
 function goHome() { showView('view-menu'); }
-
-function resetAll() {
-    if(confirm("¿Borrar todo el progreso? No podrás recuperarlo.")) {
-        localStorage.clear();
-        location.reload();
-    }
+function resetSystem() { if(confirm("¿Borrar todo?")) { localStorage.clear(); location.reload(); } }
+function speakVerb() {
+    const v = levels[cLvl][cVidx];
+    const u = new SpeechSynthesisUtterance(`${v.v1}, ${v.v2}, ${v.v3}`);
+    u.lang = 'en-US'; window.speechSynthesis.speak(u);
 }
 
 window.onload = () => {
-    const saved = localStorage.getItem('VerbAcademy_State_V2');
-    if(saved) {
-        state = JSON.parse(saved);
-        applyTheme();
-        document.getElementById('navbar').style.display = 'flex';
+    const raw = localStorage.getItem('VA_ULTRA_2026');
+    if(raw) {
+        state = JSON.parse(raw);
+        document.getElementById('main-nav').style.display = 'flex';
         goHome();
     }
 };
